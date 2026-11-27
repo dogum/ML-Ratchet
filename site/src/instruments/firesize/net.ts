@@ -9,6 +9,8 @@ export interface FSMeta {
   regions: string[]; region_names: Record<string, string>; causes: string[]; fcls: string[]; wxf: string[];
   erc_coupling: { bi: number; fm100: number; fm1000: number };
   lut_codes: number[]; lut_m1: number[]; lut_u10: number[]; version: string;
+  /** v1.0.1: standardised inputs are clipped to +-z_clip (absent or null = no clip, v1.0). */
+  z_clip?: number | null;
 }
 
 export interface Ignition {
@@ -110,7 +112,12 @@ export function probs(pack: Pack<FSMeta>, x: ArrayLike<number>, T: number): Floa
   const { t, meta } = pack;
   const F = meta.feats.length, mu = t.mu.data, sd = t.sd.data, fill = t.fill.data;
   const z = new Float64Array(F);
-  for (let j = 0; j < F; j++) { const v = Number.isFinite(x[j]) ? x[j] : fill[j]; z[j] = (v - mu[j]) / sd[j]; }
+  const zc = meta.z_clip ?? null;
+  for (let j = 0; j < F; j++) {
+    const v = Number.isFinite(x[j]) ? x[j] : fill[j];
+    const zz = (v - mu[j]) / sd[j];
+    z[j] = zc === null ? zz : Math.min(Math.max(zz, -zc), zc);
+  }
   const nc = meta.class_labels.length;
   const out = new Float64Array(nc);
   for (let e = 0; e < meta.n_ens; e++) {

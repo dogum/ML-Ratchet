@@ -5,11 +5,14 @@ import numpy as np
 SIZE_EDGES_AC = [0.095, 0.255, 0.995, 2.995, 9.995, 29.995, 99.995, 299.995, 999.995, 4999.995, 19999.995]
 
 
-def forward_np(W, X):
+def forward_np(W, X, z_clip=None):
     """W: dict with mu, sd, fill and layers [e<i>_]L<k>_w/_b (an ensemble averages member probabilities);
-    X: n x f raw features (NaN allowed). Returns n x 12 probabilities."""
+    X: n x f raw features (NaN allowed). Returns n x 12 probabilities. z_clip (27 Nov 2026): clip the standardised
+    inputs to +-z_clip, as firesize.FireSize.z_clip does (None = the released behaviour)."""
     Z = np.where(np.isfinite(X), X, W['fill'][None, :])
     z = (Z - W['mu']) / W['sd']
+    if z_clip:
+        z = np.clip(z, -z_clip, z_clip)
     ne = int(W.get('n_ens', 0))
     pre = [f'e{i}_' for i in range(ne)] if ne else ['']
     out = 0

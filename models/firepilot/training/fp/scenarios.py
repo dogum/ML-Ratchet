@@ -77,18 +77,26 @@ def real_scenario(fid, rate_mph, hidden, for_exam_scoring=False, physics=None, c
     return Scenario(ls, w, now[r0:r1, c0:c1], start, w.attrs['lonlat'][0], rate_mph, hidden, physics=physics, meta=meta)
 
 
-def _pm_start(w, lon, spin_h):
-    """First hour >= spin_h into the series whose local solar time is ~13-14 h."""
+def _pm_start(w, lon, spin_h, h0=13.0):
+    """First hour >= spin_h into the series whose local solar time is ~h0 to h0 + 1 h (13-14 h unless asked)."""
     idx = w.index
     for k in range(int(spin_h), len(idx) - int(HORIZON_H) - 1):
         loc = (idx[k].hour + lon / 15.0) % 24.0
-        if 13.0 <= loc < 14.0:
+        if h0 <= loc < h0 + 1.0:
             return idx[k]
     return None
 
 
-def synth_scenario(seed, physics=None, rate_mph=None, p_real_ls=0.6, p_real_w=0.75, max_tries=30):
-    """Seeded synthetic scenario (training / frozen validation). Returns a Scenario or raises."""
+def varied_start_hour(seed):
+    """27 Nov 2026 (audit follow-up): a crew start hour (local solar, 06-18 h) drawn from its own seeded stream, so a
+    scenario's landscape, weather and fire are the same draws as the afternoon scenario of the same seed."""
+    return float(np.random.default_rng([int(seed), 77]).integers(6, 19))
+
+
+def synth_scenario(seed, physics=None, rate_mph=None, p_real_ls=0.6, p_real_w=0.75, max_tries=30, start_hour=13.0):
+    """Seeded synthetic scenario (training / frozen validation). Returns a Scenario or raises.
+    start_hour: local solar hour of detection (13 = the afternoon of every v1.0 bank; varied_start_hour for the
+    27 Nov 2026 varied-clock banks)."""
     from .env import PHYSICS, firesim_physics
     physics = physics or PHYSICS
     rs = np.random.default_rng(seed)
@@ -119,7 +127,7 @@ def synth_scenario(seed, physics=None, rate_mph=None, p_real_ls=0.6, p_real_w=0.
                 d0 = pd.Timestamp('2019-06-01', tz='UTC') + pd.Timedelta(days=int(rs.integers(0, 120)))
                 w = fs.generate_weather(d0, hours=spin + int(HORIZON_H) + 24, climate=clim, lon=lon,
                                         rng=int(rs.integers(2 ** 31)), physics=firesim_physics(physics))
-            start = _pm_start(w, lon, spin)
+            start = _pm_start(w, lon, spin, start_hour)
             if start is None:
                 continue
             # grow the detection-time fire from a point ignition in the central half of the window

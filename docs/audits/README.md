@@ -84,12 +84,12 @@ each card still describes the released model. Its dated re-score, like every ret
 | ThermoPilot | BuildingSim cache key hashes every weather column | Bounded by the audit at ≤ 0.21 % monthly cost | **Run 27 Nov:** causal cards, 166 episodes; rows moved ≤ 0.04 bill points and ≤ 0.009 skill, no verdict changed; card updated |
 | FlowCast | Nowcast refuses lead 0; torch seeded, resume restores RNG | None | — |
 | SnowSense | Partial water years stop at the last input; torch seeded | None (exam uses completed years) | — |
-| BasinDetective | Refuses unusable calibration flow | None | Matched retrain with a symmetric precipitation prior |
-| ReservoirPilot | Opt-in `causal_capacity` | Exam definition shared with the WaterData board | Re-score of all arms with causal capacity |
+| BasinDetective | Refuses unusable calibration flow | None | Run 27 Nov 2026: retrain R6s kept (paired dev sum −0.149 → −0.040); v1.1 examined once: change ρ up on 5 of 6, median errors up on 5 of 6 |
+| ReservoirPilot | Opt-in `causal_capacity` | Exam definition shared with the WaterData board | Run 27 Nov 2026: every arm re-scored on the causal task, no verdict changed (pilot J 0.01543 → 0.01544); v1.0.1 makes it the default |
 | FireCast | Evaluation limit stated in the card | — | — |
-| FireSize | |z| > 8 warning; opt-in `z_clip` | Not re-scored: 91 of 655,869 ignitions on slash–blowdown | Bank with such ignitions, retrain, re-score |
-| FireDetective | Refuses empty histories | None (exam fires had 3–12 steps) | Retrain with an unscaled blind-wind flag |
-| FirePilot | Warning on non-afternoon crew clocks | None (all 48 exam fires had 34 h) | Train on varied start times |
+| FireSize | |z| > 8 warning; opt-in `z_clip` | Not re-scored: 91 of 655,869 ignitions on slash–blowdown | Run 27 Nov 2026: repair rung r8 rejected (+0.008 sim RPSS, needs +0.01; no exam); `z_clip = 8` re-score (SB size error 1.24 → 0.75; pooled AUC −0.0002) is the v1.0.1 default |
+| FireDetective | Refuses empty histories | None (exam fires had 3–12 steps) | Run 27 Nov 2026: R7f held, no exam: with the flag at sd 1 blind mode reads wind from BI (blind-wind R² 0.99); the 1e-3 floor had blocked that |
+| FirePilot | Warning on non-afternoon crew clocks | None (all 48 exam fires had 34 h) | Run 27 Nov 2026: r5vs (crew starts 06-18 h) kept by +0.011; v1.1 graded once: 0.469 / 0.625 vs 0.474 / 0.644 (level), self-prediction bias halved or better |
 | QuakeNet | Incomplete-window warning; refuses NaN in the window | None | — |
 | QuakeNet v2 | Catalogue-assisted picking stated in the card | — | Exam with independent picks |
 | TsunamiNet | Refuses events without a buoy; calibrated `GreensFunctions()` default | None (all 28 exam events had a buoy) | — |

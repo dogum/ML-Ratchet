@@ -222,13 +222,13 @@ limits:
   - "Inputs follow FEDS-MTBS (MTBS-sized fires, ≥ 1,000 acres in the West, 500 in the East), CONUS 2017-23, S-NPP overpasses on a 180 m grid; LANDFIRE fuels can be stale or post-fire for later fire years."
   - "Rule note: the exam input build, with the truths in the same records, ran before the ratchet closed (nothing was scored or opened before the close)."
 
-  - "Queued (audit): retrain with the blind-wind flag left unscaled (sd 1) and the checkpoint storing its RNG state; compare on dev."
+  - "Blind mode without fire-danger indices: the matched retrain of 27 Nov 2026 showed that BI (computed from gridMET wind) and ERC carry the wind into blind mode once the flag is scaled normally. Blank BI (and test ERC) in blind mode, then repeat the matched pair R6c / R7f on the same banks; this changes the blind task's definition and needs the owner's decision."
 help_wanted:
   - "Per-fire MTBS burn-severity mosaics (dNBR thematic rasters) are behind an e-mail order queue; LANDFIRE Annual Disturbance codes were used instead, which lag (only 15 recent forest fires have severity)."
   - "Real dead-fuel moisture sticks: NFMD moved into FEMS and has no public download."
   - "More dev fires with severity and LFMC truth, for the severity map, the widening and the gate."
 
-  - "Inputs (audit, 25 Nov 2026): an empty burned-area history overflowed to infinite wind; predict() now refuses fires with no observed step (every exam fire had 3-12). The blind-wind flag is scaled by a 0.001 sd floor (z = 1000 in blind mode). Rescaling it with the matching weight change leaves every output unchanged, so whether it cost accuracy in training needs a matched retrain (queued)."
+  - "Inputs (audit, 25 Nov 2026): an empty burned-area history overflowed to infinite wind; predict() now refuses fires with no observed step (every exam fire had 3-12). The blind-wind flag is scaled by a 0.001 sd floor (z = 1000 in blind mode). The matched retrain (27 Nov 2026; rebuilt bank, 3 seeds per arm; training/rung_R7f.json) answered the audit's question the other way round: with the flag at sd 1 (R7f) the blind outputs equal the visible ones (sim blind-wind R² 0.99 vs 0.31 for R6; dev blind-wind ρ 0.91 vs 0.11), because BI, computed from the gridMET wind that is both the blanked input and the dev truth, stays in the blind input; neutralising BI drops R7f's blind-wind correlation with the truth from 0.995 to 0.224 and R6's from 0.556 to 0.554. The z = 1000 scaling kept the released model off that path. R7f passes the rule's numbers but was held, and the exam was not opened."
 next:
   - "A FireSim persistence knob (burnout, stalls, night inactivity): sims grow on 91 % of half-days vs 50 % real. The same gap drives FireCast's over-prediction."
   - "Simulate a dNBR-like severity label (heat per unit area plus crown) instead of crown share, so the dev map is not needed."

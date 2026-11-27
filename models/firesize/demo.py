@@ -11,7 +11,7 @@ here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
 import firesize  # noqa: E402
 
-m = firesize.FireSize()
+m = firesize.FireSize()                       # v1.0.1: standardised inputs clipped at 8 sd (m.z_clip)
 with open(os.path.join(here, 'examples', 'demo_examples.csv'), newline='', encoding='utf-8') as fh:
     rows = list(csv.DictReader(fh))
 d = {f: np.array([float(r[f]) for r in rows]) for f in m.features}
@@ -22,8 +22,12 @@ for i, r in enumerate(rows):
     print(f"{r['fire_name'][:18]:18s} {int(r['year']):4d} {r['state']:>3s} {float(r['real_acres']):11.2f} "
           f"{out['p_escape'][i]:9.3f} {out['median_acres'][i]:10.2f} {lo:10.2f} - {hi:9.1f}")
 exam_p = np.array([float(r['exam_p_escape']) for r in rows])
-assert np.allclose(out['p_escape'], exam_p, atol=1e-4), 'differs from the exam run'
-print('\nP(escape) matches the exam run for all rows.')
+m.z_clip = None                               # v1.0's behaviour, the one the exam ran
+v10 = m.predict(d)['p_escape']
+m.z_clip = firesize.FireSize.z_clip
+assert np.allclose(v10, exam_p, atol=1e-4), 'differs from the exam run'
+print(f'\nWith the clip off (v1.0) P(escape) matches the exam run for all rows; the 8 sd clip of v1.0.1 moves it '
+      f'by at most {np.abs(out["p_escape"] - v10).max():.4f}.')
 # the exam's coverage test: is the real size class between the classes of the 10 % and 90 % points?
 real = np.searchsorted(firesize.EDGES_AC, [float(r['real_acres']) for r in rows], side='right')
 cdf = np.cumsum(out['probs'], 1)

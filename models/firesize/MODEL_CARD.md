@@ -1,4 +1,4 @@
-# FireSize v1.0: model card
+# FireSize v1.0.1: model card
 
 FireSize is ML Ratchet Wildfire Phase 2, project 2. It starts from a US wildfire ignition record: location, date, cause, reporting agency and discovery hour. Using the landscape around the ignition and gridMET weather on the discovery day and the day before, it predicts:
 - **P(escape)**: the chance the final size reaches 100 acres or more;
@@ -8,6 +8,22 @@ FireSize is ML Ratchet Wildfire Phase 2, project 2. It starts from a US wildfire
 **No real fire label was ever a training sample.** The network learned only from simulated ignitions. Real dev ignitions were used to calibrate about 30 physical suppression and reporting parameters, as ratchet gates, and to fit one widen-only temperature. The exam was run once.
 
 Part of ML Ratchet ("Trained on physics. Graded on reality."), fire platform (Wildfire Phase 2, project 2). Imported into the repository on 21 Nov 2026 (see `NOTEBOOK.md`); weights, inference and every number unchanged. The released weights file is byte-identical to the model the exam ran (its sha256 is the one in `training/results/exam.json`). "B" below is FireData, the Phase 1 data agent, whose baseline code (`shared/fire/data/scripts/baselines_firesize.py`) scored the baselines.
+
+## v1.0.1 (27 Nov 2026): inputs clipped at 8 sd
+
+The audit found that no simulated ignition sat on slash-blowdown fuel, so the 91 exam ignitions on it entered the
+network at z = 1e6: escape probability exactly 0 and the same 1.73-acre median for all of them. With the owner's
+approval:
+- **Repair rung r8, rejected.** The v1 bank was rebuilt (the control reproduces r7 to 5e-6 in every weight) and 479
+  simulated slash-blowdown ignitions added. Sim RPSS on the frozen set rose 0.2799 → 0.2881, +0.008 against the +0.01
+  the rule needs, so the exam was not opened. The frozen set has no slash-blowdown ignition; on 64 held-out simulated
+  ones r8 scored RPSS 0.127, r7 with an 8 sd clip 0.254, r7 as released −1.668.
+- **Dated re-score of v1.0 with the clip.** Pooled escape AUC 0.7266 → 0.7264, AP 0.0714 → 0.0711, size MAE 0.6416 →
+  0.6418. On the 91 slash-blowdown ignitions the size error fell from 1.237 to 0.750 log10 and the 80 % range coverage
+  rose from 0.18 to 0.96. The clip touches 19,337 exam ignitions, not 91: every Great Basin ignition has its region
+  input at z = 8.1 (escape AUC there 0.6393 → 0.6380).
+- **v1.0.1** clips by default (`FireSize.z_clip = 8`; `None` restores v1.0). Weights unchanged. `model.yaml` carries
+  the re-score; the exam table below is v1.0's, as run once. Details: `NOTEBOOK.md`, 27 Nov 2026.
 
 ## Exam (run once; 655,869 FPA-FOD ignitions, 2012–2020)
 

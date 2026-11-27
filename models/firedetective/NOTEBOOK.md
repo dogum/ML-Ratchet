@@ -241,3 +241,42 @@ R6 was loaded from `weights/firedetective_v1.npz` (`rescore_release.py`).
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). predict() refuses fires with no observed step (an empty history gave infinite wind). The blind-wind flag's z = 1000 scaling needs a matched retrain to judge; queued.
+
+
+## 27 Nov 2026 — matched retrain of the blind-wind flag scaling: R7f held (wind leaks through BI); no exam
+
+Owner-approved follow-up to the audit: the blind-wind flag `wind_hidden` is 0 on every wind-visible row the scaler
+sees, so its sd floors at 1e-3 and a blind row enters at z = 1000. The queue asked for a matched retrain with the flag
+at sd 1 and RNG state in checkpoints, compared on dev.
+
+**Rebuild.** R6's bank was not shipped. The shipped commands (`simbank.py train_v1 1000000 ...`, `train_v2 2000000
+...`, `train_v3 3000000 ...`, 100 attempts per shard) were rerun in three parallel parts (`SIMBANK_PART`, new), about
+55 s per shard here. Cumulative counts show R6 used train_v1 shards 0-30 (1,340 sims), train_v2 0-2 (108) and
+train_v3 0-59 (2,652): every count in R6's log matches exactly. `train.py` gained `--flag-sd1`, a shard cut
+(`train_v1:31`) and RNG state in its checkpoints (torch and numpy; restored on resume). `real.py package` rebuilt the
+40 dev records; R6's dev metrics reproduce exactly (composite 0.3442).
+
+**Arms** (3 seeds each, R6's recipe, `training/rung_R7f.py` -> `training/rung_R7f.json`):
+
+| | flag sd | sim primary | crown R² | blind wind R² | LFMC R² | dev ρ severity | dev ρ blind wind | dev wind MAE | dev composite |
+|---|---|---|---|---|---|---|---|---|---|
+| R6 (released) | 1e-3 | 0.3759 | 0.682 | 0.307 | 0.139 | 0.581 | 0.108 | 1.21 m/s | 0.344 |
+| R6c (control) | 1e-3 | 0.3899 | 0.674 | 0.357 | 0.138 | 0.536 | 0.115 | 1.21 m/s | 0.325 |
+| R7f | 1 | 0.6122 | 0.706 | 0.990 | 0.140 | 0.551 | 0.908 | 0.42 m/s | 0.730 |
+
+R6c does not reproduce R6 exactly (training is not bit-reproducible here); the rebuild alone moves the sim primary by
++0.014 and the dev composite by -0.019.
+
+**What R7f learned.** Its blind outputs equal its visible ones on every target (crown 0.707 vs 0.706, 1-h moisture
+0.757 vs 0.761). The blind sequence has the three wind columns zeroed and nothing else (checked), but it keeps BI, the
+burning index, which NFDRS computes from wind, plus ERC and temperature. The simulated wind label follows the gridMET
+wind input (r = 0.993), and the dev truth for blind wind is the gridMET wind itself. Setting one input at a time to its
+training mean in blind mode (val_v3): R7f's blind-wind correlation with the truth falls from 0.995 to 0.224 with BI
+neutral (0.282 with BI and ERC); R6's moves from 0.556 to 0.554, R6c's from 0.601 to 0.599. The z = 1000 scaling
+saturated the first layer in blind mode and kept the released model off the BI path; at z = 1 the network uses it.
+
+**Decision: held.** R7f passes the rule's numbers (sim +0.236, dev composite +0.385), but the gain is wind read back
+from BI, not a better blind estimate, so it does not answer the audit's question and would make the blind-wind exam
+row meaningless. The exam was not opened. For the owner: blank BI (and test ERC) in blind mode and repeat the matched
+pair on the same banks; that changes the blind task's definition. The released v1.0 is unaffected (it does not use
+BI in blind mode).

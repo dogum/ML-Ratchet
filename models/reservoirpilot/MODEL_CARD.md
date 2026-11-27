@@ -1,4 +1,4 @@
-# ReservoirPilot v1.0: model card
+# ReservoirPilot v1.0.1: model card
 
 Part of ML Ratchet, Watershed Phase 2 ("Trained on physics. Graded on reality."). Lab page: `lab/index.html`; live
 instrument on the model's site page.
@@ -144,6 +144,25 @@ f = 0.75, tau = 3 d, **H = 90 d**, dev median J 0.0369 (the c1 and c2 constants 
 0.0422 and 0.0475). Frozen in `training/dev_tuned_rule.json`, then scored once: **exam median J 0.0322**, worse than the
 simulator-tuned rule (0.0285). It hedges over 90 days of demand and keeps far more water: mean storage 0.62, end − start
 +0.18. A baseline, not a rung. Per-dam scores: `training/rescore_per_dam.csv`; intervals: `training/rescore_exam.json`.
+
+### Causal re-score of every arm, and v1.0.1 (27 Nov 2026; seen exam)
+The audit found that the exam's task took capacity as the largest storage observed anywhere in the record, the scored
+half included, so a later observation could raise the capacity an earlier release sees; the loader also interpolated
+gaps before splitting and put the split day in both halves. With the owner's approval every arm (the pilot, the g4,
+g1 and dev-tuned rules, SOP, rule curve, historical, DP) was re-scored on the causal task: capacity from GRanD and the
+calibration half only, split first, the split day in the scored half only (`RESERVOIRPILOT_TASK=causal`,
+`run_baselines_reservoir.py --causal`). 37 of the 244 dams change capacity and 169 change Qmax slightly; CDEC is
+unchanged. **No verdict changed.** Median J, exam definition → causal: pilot 0.01543 → 0.01544, g4 rule 0.0285 →
+0.0289, dev-tuned rule 0.0322 → 0.0322, SOP 0.1084 → 0.1091, rule curve 0.1430 → 0.1441, historical 0.1833 → 0.1833,
+DP 0.0063 → 0.0061. Pilot minus g4 rule: −0.0134 (95 % −0.0211 to −0.0074); it beats the g4 rule on 62.3 % of dams
+(55.9-68.4 %) and loses to SOP on 35 (was 37). The one row that moved is a storage comparison: the pilot's mean
+storage is now lower than the real operators' with an interval that excludes zero (−0.06, −0.13 to −0.005; it was
+level). `model.yaml` carries the causal numbers; the old ones are beside them in its notes and in the NOTEBOOK.
+Files: `training/rescore_exam_causal.json`, `training/rescore_per_dam_causal.csv`.
+
+v1.0.1 makes the causal task the default in `make_task` and `pipeline.py` (`causal_capacity=False` /
+`--exam-definition` restore v1.0). The weights did not change. The six packaged demo dams are still v1.0 tasks (two
+would change capacity by under 1.2 %).
 
 ### Verdicts, with intervals
 Methods: (1) a paired bootstrap over dams (10,000 resamples, numpy `default_rng(20261118)`) of median(pilot) −

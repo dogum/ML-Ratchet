@@ -1,7 +1,9 @@
 """Train one FireSize rung on simulated ignitions and score it (frozen sim set + real dev gate half).
 usage: train.py <rung> '<json config>'
 config keys: physics (bank version), theta (calib json name or 'lit'), feats ('base'), hidden, epochs, lr, seed,
-             frozen (frozen-set version tag = '<physics>|<theta>'; default = this rung's own)
+             frozen (frozen-set version tag = '<physics>|<theta>'; default = this rung's own),
+             bank (bank folder tag, default = physics; 27 Nov 2026), sb (27 Nov 2026: also train on the slash-blowdown ignitions of prior_sb.py, bank kind 'trainsb'; their
+             held-out windows (sbhold) are never trained on and are scored as res['sim_sbhold'])
 -> models/<rung>.npz, models/<rung>.json"""
 import sys, json, time, os
 from common import *
@@ -24,21 +26,28 @@ def theta_of(name):
     return json.load(open(p))['theta']
 
 
-def sim_set(physics, theta, seed=0, n_ign=None):
+def sim_set(physics, theta, seed=0, n_ign=None, sb=False, bank=None):
     """Simulated ignitions with features, soft labels, importance weights, hard draw."""
-    B = calib.load_bank(physics, 'train')
+    bank = bank or physics
+    B = calib.load_bank(bank, 'train')
     if n_ign:
         m = B['ign'] < n_ign
         B = {k: v[m] for k, v in B.items()}
     T = calib.Twins(physics, kind='train', B=B)
     th = theta_of(theta)
     P, w, hard = T.sim_probs(th)
+    if sb:      # own Twins object, so the train rows keep exactly the suppression draws they get without sb
+        Ts = calib.Twins(physics, kind='trainsb', B=calib.load_bank(bank, 'trainsb'))
+        Ps, ws, hs = Ts.sim_probs(th)
+        P, w, hard = np.concatenate([P, Ps]), np.concatenate([w, ws]), np.concatenate([hard, hs])
+        T.B = {k: np.concatenate([T.B[k], Ts.B[k]]) for k in T.B}
     X = pd.read_parquet(f'{DATA}/feat_sim.parquet').set_index('ign').loc[T.B['ign']]
     I = pd.read_parquet(f'{DATA}/ignitions.parquet').set_index('ign').loc[T.B['ign']]
     Wn = pd.read_parquet(f'{DATA}/windows.parquet').set_index('win')
     frozen = Wn.loc[I.win.values, 'frozen'].values.astype(bool)
+    sbhold = (Wn.loc[I.win.values, 'sbhold'].values == 1) if 'sbhold' in Wn else np.zeros(len(frozen), bool)
     return dict(X=X.reset_index(drop=True), P=P, w=w / np.mean(w), hard=hard, frozen=frozen, win=I.win.values,
-                ign=T.B['ign'])
+                ign=T.B['ign'], sbhold=sbhold)
 
 
 def real_dev(half):
@@ -52,8 +61,8 @@ def rps(Pf, Po):
     return np.sum((np.cumsum(Pf, 1) - np.cumsum(Po, 1)) ** 2, 1)
 
 
-def score_sim(W, S):
-    m = S['frozen']
+def score_sim(W, S, m=None):
+    m = S['frozen'] if m is None else m
     Pf = net.forward_np(W, S['X'][list(W['feats'])].values[m])
     Po = S['P'][m]; w = S['w'][m]
     clim = np.sum(w[:, None] * Po, 0) / w.sum()
@@ -78,13 +87,13 @@ def score_real(W, d, X):
 
 def fit(S, cfg, feats):
     rs = np.random.default_rng(cfg.get('seed', 0))
-    tr = ~S['frozen']
+    tr = ~S['frozen'] & ~S['sbhold']
     wins = np.unique(S['win'][tr])
     vw = set(rs.choice(wins, max(1, len(wins) // 10), replace=False))
     va = tr & np.isin(S['win'], list(vw))
     tr = tr & ~va
     X = S['X'][feats].values.astype(np.float64)
-    nf = ~S['frozen']                      # normalisation from all non-frozen rows (same for every ensemble member)
+    nf = ~S['frozen'] & ~S['sbhold']       # normalisation from all non-frozen rows (same for every ensemble member)
     fill = np.nanmedian(X[nf], 0)
     fill = np.where(np.isfinite(fill), fill, 0)
     Xf = np.where(np.isfinite(X), X, fill[None])
@@ -140,7 +149,7 @@ def main():
     cfg = json.loads(sys.argv[2])
     t0 = time.time()
     feats = feature_list(cfg.get('feats', 'base'))
-    S = sim_set(cfg['physics'], cfg['theta'], n_ign=cfg.get('n_ign'))
+    S = sim_set(cfg['physics'], cfg['theta'], n_ign=cfg.get('n_ign'), sb=cfg.get('sb', False), bank=cfg.get('bank'))
     models, infos = [], []
     for e in range(cfg.get('n_ens', 3)):
         c = dict(cfg, seed=cfg.get('seed', 0) + 100 * e)
@@ -151,6 +160,8 @@ def main():
     np.savez(f'{MOD}/{rung}.npz', **W)
     res = dict(rung=rung, cfg=cfg, info=info, frozen_version=f"{cfg['physics']}|{cfg['theta']}",
                sim=score_sim(W, S), wall_s=time.time() - t0)
+    if S['sbhold'].any():
+        res['sim_sbhold'] = score_sim(W, S, S['sbhold'])
     d, X = real_dev('gate')
     res['dev_gate'], _ = score_real(W, d, X)
     d, X = real_dev('calib')
