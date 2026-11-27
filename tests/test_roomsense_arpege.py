@@ -64,7 +64,7 @@ def test_frozen_recorded_exam_can_be_scored_and_reproduced(tmp_path, official_ar
                 prefix = Path('RIR_CEREMA_01.2026_claps').joinpath(*name.parts[1:-1])
                 clap_member = prefix / (name.stem + f'_{i}.wav')
                 claps.write(raw / name, clap_member)
-                claps.write(raw / name, str(clap_member).replace('/EM32/', '/EM64/'))
+                claps.write(raw / name, clap_member.as_posix().replace('/EM32/', '/EM64/'))
                 with zipfile.ZipFile(downloads / f'room{i}_RIR.zip', 'w') as sweeps:
                     ref = Path(pair['sweep_response'])
                     sweeps.write(raw / ref, Path(*ref.parts[1:]))
