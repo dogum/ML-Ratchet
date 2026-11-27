@@ -140,7 +140,7 @@ def real(split, out_name):
     for k in sp[split]:
         p = f'{_P.WORK}/data/lc/{k}.npz'
         if not os.path.exists(p): continue
-        for L, seg in RB.pieces(sq.read_npz(p), k):
+        for L, seg in RB.pieces(sq.read_npz(p, trim=os.environ.get('SQ_TRIM') == '1'), k):
             if seg is None: continue
             R.append(reading(net, seg)); T.append([np.log(Y[str(k)]['numax']), np.log(Y[str(k)]['dnu'])]); M.append(dict(kic=k, L=L, e_numax=Y[str(k)]['e_numax'] / Y[str(k)]['numax'], e_dnu=Y[str(k)]['e_dnu'] / Y[str(k)]['dnu']))
     np.savez(H + out_name + '.npz', r=np.array(R), y=np.array(T), meta=json.dumps(M)); print(out_name, len(R))
@@ -158,11 +158,11 @@ def real_report(name, params):
     return res
 
 
-def exam(params_path, widen_path):
+def exam(params_path, widen_path, name='exam', out_name='exam_result.json'):
     """The exam, once (after the release choice): the released r5 network, the hybrid, the classical pipeline (same
     readings) and the dumb dev-median guess, per length; coverage of each one's dev-widened 68% bars (published error
     added in quadrature, as exam.py); mass and radius vs Yu and Gaia DR3 for the whole light curves."""
-    params = json.load(open(params_path)); W = json.load(open(widen_path)); z = np.load(H + 'exam.npz'); r, y = z['r'], z['y']; M = json.loads(str(z['meta']))
+    params = json.load(open(params_path)); W = json.load(open(widen_path)); z = np.load(H + name + '.npz'); r, y = z['r'], z['y']; M = json.loads(str(z['meta']))
     L = np.array([m['L'] for m in M]); hy = combine(r, params); pub = np.array([[m['e_numax'], m['e_dnu']] for m in M])
     dv = np.load(H + 'dev.npz'); dmed = np.median(np.exp(dv['y'][[m['L'] == 0 for m in json.loads(str(dv['meta']))]]), 0)
     est = {'release': (r[:, 0], r[:, 1], r[:, 2] * W['release'][0], r[:, 3] * W['release'][1]),
@@ -191,7 +191,7 @@ def exam(params_path, widen_path):
         out['mass_radius'][name] = {'R_vs_gaia_ratio': float(np.nanmedian(R[g] / gR[g])) if g.any() else None, 'R_vs_gaia_scatter': sc(R[g] / gR[g]) if g.any() else None,
                                     'M_vs_yu_med': float(np.nanmedian(np.abs(Ms[ok] / yM[ok] - 1))), 'R_vs_yu_med': float(np.nanmedian(np.abs(R[ok] / yR[ok] - 1)))}
     out['mass_radius']['yu'] = {'R_vs_gaia_ratio': float(np.median(yR[g] / gR[g])) if g.any() else None, 'R_vs_gaia_scatter': sc(yR[g] / gR[g]) if g.any() else None}
-    print(json.dumps(out['mass_radius'], indent=1)); json.dump(out, open(H + 'exam_result.json', 'w'), indent=1); return out
+    print(json.dumps(out['mass_radius'], indent=1)); json.dump(out, open(H + out_name, 'w'), indent=1); return out
 
 
 def widen(name, params=None):
@@ -218,3 +218,4 @@ if __name__ == '__main__':
     elif a[0] == 'real_report': real_report(a[1], json.load(open(a[2] if len(a) > 2 else H + 'params.json')))
     elif a[0] == 'widen': widen(a[1], json.load(open(H + 'params.json')))
     elif a[0] == 'exam': exam(H + 'params.json', H + 'widen.json')
+    elif a[0] == 'exam_trim': exam(H + 'params.json', H + 'widen.json', 'exam_trim', 'exam_trim_result.json')   # 27 Nov 2026 supplementary re-score

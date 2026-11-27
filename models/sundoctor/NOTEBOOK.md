@@ -157,3 +157,21 @@ it is restored in `realdata.py` (the sibling key gives the same 56 string failur
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). diagnose_csv sorts rows by time (newest-first files gave 0 days). Days with midday gaps now warn; min_daylight drops them (opt-in; re-score queued).
+
+## 27 Nov 2026 — dated re-score with min_daylight 0.9; v2.1.1 makes it the default
+
+Audit queue. The released v2.1 weights, unchanged, re-scored once on the same rebuilt PVDAQ data
+(`training/exam_v211.py`, which runs `exam_v21.py`'s scoring twice; `realexam2.diagnose` gained the same `min_daylight`
+rule as `sundoctor.diagnose`). Record: `training/exam_v211_min_daylight.json`.
+
+- Days affected: 2107 none (52,624 inverter-days counted); 9068 drops 328 of 17,468 (160 miss more than 2 h).
+- The half-day row reproduces `exam_v21.json` (v2.1) to every digit.
+- 9068 with sensor: outage days caught 92.9 → 94.7%, false outage alarms 0.09 → 0.06%, snow AUC 0.891 → 0.891, big
+  tracker-loss days flagged 72.2 → 71.7%, tracker-loss AUC 0.471 → 0.460. Power only: outage 90.8 → 90.8%, snow AUC
+  0.821 → 0.822, big tracker-loss flagged 78.9 → 80.8%, tracker AUC 0.459 → 0.451.
+- Episodes unchanged: string failures 55 / 56 (49 power only), repairs 39 / 47, offline inverters 48 / 49 (47 power
+  only). 2107 dead-string count 95.7% (94.0% power only), unchanged.
+- No verdict changes; the small-tracker-loss row stays a loss (0.46 vs coin flip 0.50).
+- v2.1.1: `diagnose(min_daylight=0.9)` is the default (`min_daylight=None` restores the v2.1 rule, with the warning).
+  The demo's Colorado winter counts 103 days instead of 104 and its outage loss falls 3.43 → 2.82%; golden output
+  regenerated for that reason.

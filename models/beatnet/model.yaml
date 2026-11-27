@@ -119,13 +119,13 @@ limits:
   - Not a medical device. Research and teaching only.
   - Models trained on real DS1 (de Chazal 2004, Zhang 2014) still do better on S and F beats.
   - Non-premature S beats are missed; aberrated APCs are called V.
-  - "Shared patient and missing samples (audit, 25 Nov 2026): MIT-BIH records 201 (dev calibration and training background) and 202 (DS2 exam) are the same patient. Leaving 202 out of the archived DS2 per-record scores moves macro-F1 from 0.5466 to 0.5531 and SV-F1 from 0.6176 to 0.6305; the effect of 201's exposure needs a retrain (queued). One NaN sample made every beat's probabilities NaN and its label 'N'; since 27 Nov 2026 gaps of up to 10 samples are filled and longer ones refused."
+  - "Shared patient and missing samples (audit, 25 Nov 2026): MIT-BIH records 201 (dev calibration and training background) and 202 (DS2 exam) are the same patient. Leaving 202 out of the archived DS2 per-record scores moves macro-F1 from 0.5466 to 0.5531 and SV-F1 from 0.6176 to 0.6305; a retrain without the patient (27 Nov 2026: dev without 201, calibration and quiet background rebuilt, physics v5, two seeds from scratch) beat v1.0 in simulation (macro-F1 0.896 and 0.903 vs 0.879) but failed the dev gate (S/V F1 0.409 and 0.536 vs 0.579), so v1.0 stays. Its dated DS2 score without 202 (27 Nov 2026): macro-F1 0.553, SV-F1 0.631 (all 22 records, re-scored: 0.547, 0.618). One NaN sample made every beat's probabilities NaN and its label 'N'; since 27 Nov 2026 gaps of up to 10 samples are filled and longer ones refused."
 next:
+  - "Why from-scratch training on physics v5 calls more dev beats V (V +P 0.40 vs 0.57) and swings S sensitivity 0.28-0.60 between seeds: a seed ensemble or a warm-start ladder on v5, judged on the 5-record dev."
   - Wider bundle-branch-block morphology in the simulator, calibrated on a DS1 LBBB record kept out of the exam.
   - A twin test per dev record — calibration so far is population-level only.
   - Refit the fusion visibility window to how annotators used F.
 
-  - "Queued (audit): retrain and recalibrate with patient 201/202 excluded from dev, backgrounds and exam, then a dated re-score."
 usage:
   install: pip install numpy scipy
   demo: python demo.py

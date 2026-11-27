@@ -159,3 +159,24 @@ v1.0 numbers reproduce the 6 Nov exam (37.5% / 33.5 h / 19.2°, coverage 67 / 74
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). read() refuses windows with no finite energy (they read as a storm swell); read_ndbc(field_sentinels=True) keeps valid 99 bearings (opt-in; re-score queued).
+
+## 27 Nov 2026 — dated re-score with field sentinels; v1.1.1 makes them the default
+
+Audit queue. The released v1.1 network, unchanged, re-scored once (`training/rescore_fs.py`, 19:23 UTC; record
+`training/exam_v111_fs.json`). `fetch.py` had deleted the raw files after gridding, so the swdir and swr1 files of the
+422 buoy-years that exam and dev windows touch were downloaded again from NDBC (no refusals). Each was parsed twice
+through `fetch.parse`: the old way, which reproduced the stored grid for all 367 buoy-years that have direction files
+(55 have none), and with `keep_99=True`, written to `work/data/buoy_fs/`. 95,482,881 → 95,490,428 finite direction
+cells (+7,547). Energy unchanged. Events, labels and splits: the frozen `data/events.json`.
+
+| Set | v1.1 parse: D / t0 / dir / detected | field sentinels |
+|---|---|---|
+| exam confirmed (288) | 29.32% / 26.82 h / 19.23° / 63.2% | 29.27% / 26.86 h / 19.31° / 63.2% |
+| exam visible (649) | 41.96% / 30.34 h / 36.15° / 58.2% | 41.97% / 30.17 h / 36.32° / 58.1% |
+| exam all (2,124) | 44.28% / 34.40 h / 43.04° / 33.6% | 44.29% / 34.44 h / 43.03° / 33.7% |
+| dev confirmed (29) | 24.60% / 25.48 h / 22.11° / 55.2% | 24.63% / 25.35 h / 22.10° / 55.2% |
+
+The old-parse row reproduces the published exam. Nothing moves by more than 0.17 h or 0.17°; coverage moves by at most
+0.4 points. v1.1.1: `pipeline.read_ndbc(field_sentinels=True)` and `fetch.FIELD_SENTINELS = True` are the defaults.
+The demo's Olivia distance moves 1,948 → 1,952 km (golden file updated for that line). The packaged pre-cut example
+windows were cut with the v1.1 parse and were not re-cut.

@@ -112,3 +112,30 @@
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). Station coordinates and catalogue arrivals alone locate the packaged exam events; the network reads waveforms, but its exam location accuracy rests on catalogue pick windows. The card now says so; an exam with independent picks is queued.
+
+## 27 Nov 2026 — supplementary exam with independent picks (released model unchanged)
+
+Audit queue: the exam's location rests on catalogue-assisted P guesses.
+
+- **Data** (`training/fetch_cont.py`): continuous LH blocks from EarthScope FDSN, 10 minutes before the UTC hour of the
+  origin to 2 hours after (7,800 samples), same processing as `fetch2.py`, same station order (originals, then
+  `station_order.json`; first 10 usable, at most 14 extra tries). Dev 40 quakes: 399 records in 3 minutes. Exam 400
+  quakes: 3,986 records (394 no data, 76 missing components, 15 processing failures) in 21 minutes, 380 MB in
+  `work/data/wf_cont/` (git-ignored). The host never refused.
+- **Pickers, fixed on dev** (`training/indep_exam.py dev`): the strongest trigger per record failed on dev (30% of picks
+  within 30 s; median miss 1,291 km vs 126 km with the catalogue guess on the same records). A grid-search associator
+  was added; a dev sweep (trigger level 3/4 x 5/10/30 triggers x 6/12 s) chose level 4, the 5 strongest triggers,
+  6 s: 41% of dev picks within 10 s; dev median miss 722 km (all stations).
+- **Exam, run once** (27 Nov 2026 19:18 UTC; the scripts were committed in e293787 and not changed after the run):
+
+| P guess | 3 stations | 5 | all (≤10) | all: depth | all: Mw | all: t0 | picks within 10 s |
+|---|---|---|---|---|---|---|---|
+| catalogue (control) | 279 km | 191 | 123 | 17.6 km | 0.096 | 4.5 s | — |
+| associated | 694 | 548 | 497 | 26.6 | 0.122 | 40.4 | 40% |
+| per record | 2,287 | 1,764 | 1,284 | 47.0 | 0.159 | 475 | 28% |
+
+- The control reproduces the published 127 km (123 km) from freshly fetched records.
+- Verdict: the location accuracy depends on catalogue-assisted picking. With an honest associator it is about 4x worse
+  (497 vs 123 km median, all stations), and ellipse coverage falls to 26%. Recorded in the card and in model.yaml
+  losses and limits. Records: `training/results/indep_exam.json`, `indep_exam_dev.json` (per event; per-pick lists in
+  `work/`).

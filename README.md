@@ -62,7 +62,7 @@ Every model also runs **live in your browser** on the website — the real netwo
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **587** rung decisions are logged, **336** of them rejections.
+**0** real labelled examples were used for training. **590** rung decisions are logged, **338** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three

@@ -116,3 +116,25 @@ Audit queue. MIT-BIH 201 (dev, calibration, quiet background pool) and 202 (DS2)
   Rule unchanged: keep if v5val macro-F1 rises by more than 0.01 AND dev mean S/V F1 drops by no more than 0.02.
   DS2 is not scored per rung any more; exam.py opens it once for the rung the ratchet releases.
 - If no rung is promoted, v1.0's DS2-without-202 score is recorded instead.
+
+## 27 Nov 2026 — result: retrain without 201/202 not promoted; v1.0's DS2 without 202 recorded
+
+Ladder `training/ratchet_v2.json` (v5val, dev split v2; rules fixed above, committed in e293787 before scoring):
+
+| Rung | v5val macro-F1 | dev S/V F1 | dev F1 N / S / V | decision |
+|---|---|---|---|---|
+| r5 (released, rebuilt from numpy) | 0.879 | 0.579 | 0.960 / 0.436 / 0.722 | incumbent |
+| r6_s0 (seed 0) | 0.896 | 0.409 | 0.923 / 0.247 / 0.572 | rejected: dev gate |
+| r6_s1 (seed 1) | 0.903 | 0.536 | 0.921 / 0.513 / 0.560 | rejected: dev gate |
+
+- Training: 9,000 steps each on one thread, about 75 minutes, two seeds in parallel; bank 64,000 beats
+  (v5 seeds 0–1499 plus v5x0/v5x1 seeds 1500–3999).
+- What failed: both from-scratch networks call far more dev beats V (V +P 0.40 against 0.57; dev N sensitivity 0.86
+  against 0.93), and dev S sensitivity depends on the seed (0.28 vs 0.60). r5 came through a warm-start ladder
+  (v1 → v2 → v4 banks); a single from-scratch run on v5 does not reproduce its dev behaviour. Not tried: a warm start
+  from r5 (it would carry the 201-exposed background), a seed ensemble.
+- DS2 was not opened for either rung. v1.0 stays.
+- **Dated DS2 score of v1.0 without 202** (`training/ds2_without_202.py`, 27 Nov 2026; record
+  `training/ds2_without_202.json`): released weights and their stored dev prior; 21 records: macro-F1 0.5531, SV-F1
+  0.6305 (rules 0.4321). All 22 records from the rebuilt bank: 0.5465 / 0.6176, which reproduces the published 0.547.
+- Calibration record: `training/calib_coupling.json` gains `v5_trial` (dev split v2 vs the v5 trial bank).

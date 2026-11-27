@@ -19,7 +19,7 @@ def get(b, k, y):
         os.rename(fn + '.part', fn); time.sleep(0.3)
     return fn
 
-FIELD_SENTINELS = False   # keep 99 in swdir (a valid bearing) and swr1 (r1 = 0.99); 999 stays missing. See pipeline.read_ndbc.
+FIELD_SENTINELS = True    # default since v1.1.1 (27 Nov 2026); keep 99 in swdir (a valid bearing) and swr1 (r1 = 0.99); 999 stays missing. See pipeline.read_ndbc.
 
 def parse(fn, year, keep_99=False):
     """-> hour index within year (int), freqs, values (n, nf) with NaN for missing. keep_99: 99 is a value, not a gap

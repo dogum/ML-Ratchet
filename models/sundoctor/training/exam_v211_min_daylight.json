@@ -1,0 +1,311 @@
+{
+ "run_utc": "2026-11-27 18:57 UTC",
+ "days": {
+  "2107": {
+   "inverter_days_counted": 52624,
+   "dropped_by_min_daylight_0_9": 0,
+   "warned_lt_0_75": 0
+  },
+  "9068": {
+   "inverter_days_counted": 17468,
+   "dropped_by_min_daylight_0_9": 328,
+   "warned_lt_0_75": 160
+  }
+ },
+ "half_day_rule": {
+  "2107_poa": {
+   "n_inverter_days": 41261,
+   "count_acc": 0.9567872809674995,
+   "count_acc_when_dead": 0.6249721293199554,
+   "healthy_called_healthy": 0.9972536436806613,
+   "frac_mae": 0.017471584775494015,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     36675,
+     101,
+     0,
+     0
+    ],
+    [
+     1554,
+     2488,
+     24,
+     0
+    ],
+    [
+     55,
+     19,
+     294,
+     2
+    ],
+    [
+     22,
+     3,
+     3,
+     21
+    ]
+   ],
+   "n_dead_days": 4485,
+   "onsets_true": 322,
+   "onsets_found_pm1day": 138,
+   "step_alarms": 386
+  },
+  "episodes_poa": {
+   "string_failures": 56,
+   "onsets_found_pm1day": 55,
+   "repairs": 47,
+   "repairs_found": 39,
+   "offline_events": 49,
+   "offline_found": 48,
+   "offline_missed_dates": [
+    [
+     2,
+     "2022-11-01"
+    ]
+   ]
+  },
+  "9068_poa": {
+   "stuck_corr": 0.6062511179025954,
+   "stuck_auc_2pct": 0.4707703767720319,
+   "stuck_mae": 0.0171518039763024,
+   "stuck_true_mean": 0.015691500188487317,
+   "stuck_pred_mean": 0.011717108153513513,
+   "stuck_days_big": 234,
+   "stuck_found_big": 0.7222222222222222,
+   "outage_auc": 0.9988946790494885,
+   "outage_found": 0.9289617486338798,
+   "outage_false": 0.0008999280057595393,
+   "outage_days": 183,
+   "snow_days": 166,
+   "snow_found": 0.5060240963855421,
+   "snow_auc": 0.8910661641924388,
+   "snow_mae_on_snow_days": 0.33153639797207934,
+   "snow_called_outage": 0.10240963855421686,
+   "snow_false_summer": 0.0,
+   "snow_false_winter_clear": 0.001481042654028436
+  },
+  "2107_home": {
+   "n_inverter_days": 43033,
+   "count_acc": 0.9402319150419446,
+   "count_acc_when_dead": 0.5532204709087372,
+   "healthy_called_healthy": 0.9927165250435425,
+   "frac_mae": 0.02051070526059078,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     37618,
+     268,
+     7,
+     1
+    ],
+    [
+     1893,
+     2561,
+     178,
+     0
+    ],
+    [
+     136,
+     53,
+     261,
+     1
+    ],
+    [
+     27,
+     4,
+     4,
+     21
+    ]
+   ],
+   "n_dead_days": 5139,
+   "onsets_true": 359,
+   "onsets_found_pm1day": 119,
+   "step_alarms": 444
+  },
+  "episodes_home": {
+   "string_failures": 56,
+   "onsets_found_pm1day": 49,
+   "repairs": 47,
+   "repairs_found": 27,
+   "offline_events": 49,
+   "offline_found": 47,
+   "offline_missed_dates": [
+    [
+     2,
+     "2022-11-01"
+    ],
+    [
+     6,
+     "2021-02-18"
+    ]
+   ]
+  },
+  "9068_home": {
+   "stuck_corr": 0.2864186335334059,
+   "stuck_auc_2pct": 0.4588842346169016,
+   "stuck_mae": 0.036794064161565755,
+   "stuck_true_mean": 0.011216784334204926,
+   "stuck_pred_mean": 0.03748887940017557,
+   "stuck_days_big": 298,
+   "stuck_found_big": 0.7885906040268457,
+   "outage_auc": 0.9959428146258503,
+   "outage_found": 0.9083333333333333,
+   "outage_false": 0.0007704160246533128,
+   "outage_days": 240,
+   "snow_days": 166,
+   "snow_found": 0.3493975903614458,
+   "snow_auc": 0.8209952515846416,
+   "snow_mae_on_snow_days": 0.411741178481837,
+   "snow_called_outage": 0.08433734939759036,
+   "snow_false_summer": 0.0,
+   "snow_false_winter_clear": 0.0038507109004739335
+  }
+ },
+ "min_daylight_0_9": {
+  "2107_poa": {
+   "n_inverter_days": 41261,
+   "count_acc": 0.9567872809674995,
+   "count_acc_when_dead": 0.6249721293199554,
+   "healthy_called_healthy": 0.9972536436806613,
+   "frac_mae": 0.017471584775494015,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     36675,
+     101,
+     0,
+     0
+    ],
+    [
+     1554,
+     2488,
+     24,
+     0
+    ],
+    [
+     55,
+     19,
+     294,
+     2
+    ],
+    [
+     22,
+     3,
+     3,
+     21
+    ]
+   ],
+   "n_dead_days": 4485,
+   "onsets_true": 322,
+   "onsets_found_pm1day": 138,
+   "step_alarms": 386
+  },
+  "episodes_poa": {
+   "string_failures": 56,
+   "onsets_found_pm1day": 55,
+   "repairs": 47,
+   "repairs_found": 39,
+   "offline_events": 49,
+   "offline_found": 48,
+   "offline_missed_dates": [
+    [
+     2,
+     "2022-11-01"
+    ]
+   ]
+  },
+  "9068_poa": {
+   "stuck_corr": 0.6095514465073244,
+   "stuck_auc_2pct": 0.45987953518765806,
+   "stuck_mae": 0.017019820721961048,
+   "stuck_true_mean": 0.015535170460530108,
+   "stuck_pred_mean": 0.011529615368905557,
+   "stuck_days_big": 230,
+   "stuck_found_big": 0.717391304347826,
+   "outage_auc": 0.999296462771155,
+   "outage_found": 0.9470588235294117,
+   "outage_false": 0.0005513692335967653,
+   "outage_days": 170,
+   "snow_days": 166,
+   "snow_found": 0.5060240963855421,
+   "snow_auc": 0.8909925415949512,
+   "snow_mae_on_snow_days": 0.33155608318247287,
+   "snow_called_outage": 0.10240963855421686,
+   "snow_false_summer": 0.0,
+   "snow_false_winter_clear": 0.0014845605700712589
+  },
+  "2107_home": {
+   "n_inverter_days": 43033,
+   "count_acc": 0.9402319150419446,
+   "count_acc_when_dead": 0.5532204709087372,
+   "healthy_called_healthy": 0.9927165250435425,
+   "frac_mae": 0.02051070526059078,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     37618,
+     268,
+     7,
+     1
+    ],
+    [
+     1893,
+     2561,
+     178,
+     0
+    ],
+    [
+     136,
+     53,
+     261,
+     1
+    ],
+    [
+     27,
+     4,
+     4,
+     21
+    ]
+   ],
+   "n_dead_days": 5139,
+   "onsets_true": 359,
+   "onsets_found_pm1day": 119,
+   "step_alarms": 444
+  },
+  "episodes_home": {
+   "string_failures": 56,
+   "onsets_found_pm1day": 49,
+   "repairs": 47,
+   "repairs_found": 27,
+   "offline_events": 49,
+   "offline_found": 47,
+   "offline_missed_dates": [
+    [
+     2,
+     "2022-11-01"
+    ],
+    [
+     6,
+     "2021-02-18"
+    ]
+   ]
+  },
+  "9068_home": {
+   "stuck_corr": 0.29044208533012844,
+   "stuck_auc_2pct": 0.450839061880197,
+   "stuck_mae": 0.036668982701260365,
+   "stuck_true_mean": 0.010946045577294219,
+   "stuck_pred_mean": 0.037336149923844,
+   "stuck_days_big": 286,
+   "stuck_found_big": 0.8076923076923077,
+   "outage_auc": 0.9959428146258503,
+   "outage_found": 0.9083333333333333,
+   "outage_false": 0.0007704160246533128,
+   "outage_days": 240,
+   "snow_days": 166,
+   "snow_found": 0.3493975903614458,
+   "snow_auc": 0.8217740899632646,
+   "snow_mae_on_snow_days": 0.4117449860954532,
+   "snow_called_outage": 0.08433734939759036,
+   "snow_false_summer": 0.0,
+   "snow_false_winter_clear": 0.003859857482185273
+  }
+ }
+}
