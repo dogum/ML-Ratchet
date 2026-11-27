@@ -162,3 +162,24 @@ Run on the owner's approval (`training/road_sign.py`, records `training/results/
   (p2-c20) 0.209. Choosing among these on EV dev is a different rule, and the owner's call. What a correct grade law
   needs, judging by these fronts, is a grade term that switches with the powertrain: energy rises with grade for every
   car, and BEVs recover part of the descent. The search's one-line, pooled form has not found one in 1,800 s.
+
+## 2026-11-27 — road law v1.1, part 1: the sign gate adopted as a release rule; p1-c17 chosen (before the exam)
+
+**Rule change (owner decision, 27 Nov 2026).** From now on a road-law candidate may not be kept, and so not released,
+if its energy falls as net grade rises at any val_p2 row (E(G + 0.25) ≥ E(G − 0.25) at every row, other inputs held;
+`road_sign.py`'s check). The reason is physics: tank and battery energy rise with uphill grade for every powertrain.
+The released v1.0 law p1-c23 failed the check on 21 % of val_p2 rows and on every battery-electric row. The audit
+(25 Nov 2026) prompted the rule. No exam result did. The rest of the rule is unchanged: frozen R² beats the incumbent
+by more than 0.01, dev error no more than 5 % worse.
+
+**The walk, re-run with no new search** (`training/road_gate.py`). It covers the 40 v1.0 rungs plus the 13 sign-checked
+p2s rungs, all on val_p2. The kept rungs are r0, p1-c5, c7, c10, c11, c14 and **p1-c17**. p1-c23 and p1-c25 are now
+rejected by the gate, and nothing after p1-c17 beats its R² by 0.01 while passing the gate. **Released: p1-c17**,
+`E = M·exp(2·(v^-0.6288 - e)·(sqrt(0.1124·R) - h))`, which does not read grade. It has frozen R² 0.754 (v1.0: 0.767)
+and dev MdAPE 0.175 (v1.0: 0.168). Its error bar is σ_sim 0.804 MJ/km, widen factor 1.0, and dev coverage 83 %.
+Records: `results/road_ratchet.json` (v1.1), `results/road_ratchet_v10.json` (v1.0 as released).
+
+**What is already known about the exam.** The v1.0 exam scored every rung after the fact (`exam_road.json`
+`strata_rungs`), so p1-c17's exam numbers were published with v1.0. On VED, all trips, its MdAPE was 18.67 % against
+p1-c23's 18.60 %. The switch therefore does not favour the exam: p1-c17 was slightly worse on it. The exam is run once
+more for v1.1 (part 2) so the release has its own dated record and bars.

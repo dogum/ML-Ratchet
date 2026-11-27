@@ -1,10 +1,10 @@
 {
  "bars": {
-  "sigma_sim": 0.7829597254334687,
+  "sigma_sim": 0.8041768477901963,
   "widen_dev": 1.0,
-  "sigma": 0.7829597254334687,
-  "dev_cov68_raw": 0.8357385398981324,
-  "dev_cov68_widened": 0.8357385398981324
+  "sigma": 0.8041768477901963,
+  "dev_cov68_raw": 0.8297962648556876,
+  "dev_cov68_widened": 0.8297962648556876
  },
  "law": "road",
  "title": "Trip energy per km",
@@ -120,7 +120,7 @@
  },
  "margin": 0.01,
  "dev_tol": 1.05,
- "rule": "Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse. Rungs = Pareto-front laws in order of complexity, then physics versions; after a physics change every rung is re-scored on the new frozen set and every decision re-taken.",
+ "rule": "Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse. Rungs = Pareto-front laws in order of complexity, then physics versions; after a physics change every rung is re-scored on the new frozen set and every decision re-taken. Since 27 Nov 2026 (road law v1.1): sign gate (adopted 27 Nov 2026 after the audit): energy may not fall as net grade rises at any val_p2 row.",
  "rungs": [
   {
    "id": "r0",
@@ -150,7 +150,12 @@
    "sim": -0.012463074605035596,
    "dev": 0.2820287958692139,
    "dev_r2": -0.005069779634435667,
-   "sigma_sim": 1.659416978007824
+   "sigma_sim": 1.659416978007824,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c2",
@@ -181,7 +186,12 @@
    "sim": 0.05782397585625454,
    "dev": 0.3118099089580698,
    "dev_r2": 0.07946151067339713,
-   "sigma_sim": 1.599114829468531
+   "sigma_sim": 1.599114829468531,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c3",
@@ -218,7 +228,12 @@
    "sim": 0.22803039026881355,
    "dev": 0.3081823672837003,
    "dev_r2": 0.21922762578026733,
-   "sigma_sim": 1.447155925426185
+   "sigma_sim": 1.447155925426185,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c4",
@@ -258,7 +273,12 @@
    "sim": 0.3452304876096445,
    "dev": 0.3525453635272966,
    "dev_r2": 0.27085776831784747,
-   "sigma_sim": 1.3371569064893358
+   "sigma_sim": 1.3371569064893358,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c5",
@@ -302,7 +322,12 @@
    "sim": 0.47353777178714274,
    "dev": 0.2526178975825696,
    "dev_r2": 0.48347494027360416,
-   "sigma_sim": 1.18930634924456
+   "sigma_sim": 1.18930634924456,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c7",
@@ -350,7 +375,12 @@
    "sim": 0.567026573828026,
    "dev": 0.18844844729960775,
    "dev_r2": 0.6116835658005366,
-   "sigma_sim": 1.0798403681933508
+   "sigma_sim": 1.0798403681933508,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c9",
@@ -409,7 +439,12 @@
    "sim": 0.5544178417161867,
    "dev": 0.22746038004736457,
    "dev_r2": 0.5265770028157224,
-   "sigma_sim": 1.0861811667476777
+   "sigma_sim": 1.0861811667476777,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c10",
@@ -470,7 +505,12 @@
    "sim": 0.6581644190834723,
    "dev": 0.1684456282928633,
    "dev_r2": 0.6789330859446411,
-   "sigma_sim": 0.9493142475609191
+   "sigma_sim": 0.9493142475609191,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c11",
@@ -534,7 +574,12 @@
    "sim": 0.6963855377851538,
    "dev": 0.16006789917236253,
    "dev_r2": 0.7107812592465641,
-   "sigma_sim": 0.8843603516800368
+   "sigma_sim": 0.8843603516800368,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c12",
@@ -603,7 +648,12 @@
    "sim": 0.7168726958424622,
    "dev": 0.1716204011131962,
    "dev_r2": 0.7035969159838535,
-   "sigma_sim": 0.8819074079926067
+   "sigma_sim": 0.8819074079926067,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c13",
@@ -675,7 +725,12 @@
    "sim": 0.7271395473840958,
    "dev": 0.1685170269571039,
    "dev_r2": 0.7205852879146942,
-   "sigma_sim": 0.8554241996529706
+   "sigma_sim": 0.8554241996529706,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c14",
@@ -750,7 +805,12 @@
    "sim": 0.7282695764934658,
    "dev": 0.1674070993781402,
    "dev_r2": 0.7138201948995345,
-   "sigma_sim": 0.8474628908825179
+   "sigma_sim": 0.8474628908825179,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c17",
@@ -835,7 +895,12 @@
    "sim": 0.7544912517577069,
    "dev": 0.1753188352504847,
    "dev_r2": 0.7220477401395543,
-   "sigma_sim": 0.8041768477901963
+   "sigma_sim": 0.8041768477901963,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c18",
@@ -924,7 +989,12 @@
    "sim": 0.763040648689524,
    "dev": 0.16499082841640922,
    "dev_r2": 0.758604139255511,
-   "sigma_sim": 0.7906230238053399
+   "sigma_sim": 0.7906230238053399,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c19",
@@ -1018,7 +1088,12 @@
    "sim": 0.7488801052646844,
    "dev": 0.17833585120768314,
    "dev_r2": 0.7131036360953988,
-   "sigma_sim": 0.809636391255208
+   "sigma_sim": 0.809636391255208,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c20",
@@ -1115,7 +1190,12 @@
    "sim": 0.7643124856737602,
    "dev": 0.15886536278750696,
    "dev_r2": 0.7556676721149027,
-   "sigma_sim": 0.7876236524060791
+   "sigma_sim": 0.7876236524060791,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c21",
@@ -1217,7 +1297,12 @@
    "sim": 0.764368297464543,
    "dev": 0.1652765905765914,
    "dev_r2": 0.7412785150996115,
-   "sigma_sim": 0.7881952447340775
+   "sigma_sim": 0.7881952447340775,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p1-c23",
@@ -1325,7 +1410,12 @@
    "sim": 0.7670793415856163,
    "dev": 0.16795879581027506,
    "dev_r2": 0.7398112357999048,
-   "sigma_sim": 0.7829597254334687
+   "sigma_sim": 0.7829597254334687,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.2125,
+    "falls_share_bev": 1.0
+   }
   },
   {
    "id": "p1-c25",
@@ -1441,7 +1531,12 @@
    "sim": 0.7656577567645376,
    "dev": 0.1706271341046422,
    "dev_r2": 0.7369521981843635,
-   "sigma_sim": 0.7827056376394895
+   "sigma_sim": 0.7827056376394895,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.2125,
+    "falls_share_bev": 1.0
+   }
   },
   {
    "id": "p2-c2",
@@ -1468,7 +1563,12 @@
    "sim": 0.10207950598168691,
    "dev": 0.33460810018152476,
    "dev_r2": -0.13951914539082133,
-   "sigma_sim": 1.5664707396877517
+   "sigma_sim": 1.5664707396877517,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c3",
@@ -1501,7 +1601,12 @@
    "sim": 0.23932786242648074,
    "dev": 0.33791418402468953,
    "dev_r2": 0.1640099451761048,
-   "sigma_sim": 1.4471559254261848
+   "sigma_sim": 1.4471559254261848,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c4",
@@ -1537,7 +1642,12 @@
    "sim": 0.3708125466822647,
    "dev": 0.3858184160655638,
    "dev_r2": 0.18237134465481342,
-   "sigma_sim": 1.3162622932138466
+   "sigma_sim": 1.3162622932138466,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c5",
@@ -1577,7 +1687,12 @@
    "sim": 0.4483227599392132,
    "dev": 0.25571648765705896,
    "dev_r2": 0.4873040833500706,
-   "sigma_sim": 1.224458646143174
+   "sigma_sim": 1.224458646143174,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c6",
@@ -1620,7 +1735,12 @@
    "sim": 0.41944265772433,
    "dev": 0.23134414410372361,
    "dev_r2": 0.4173985671098531,
-   "sigma_sim": 1.261001947924277
+   "sigma_sim": 1.261001947924277,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c7",
@@ -1667,7 +1787,12 @@
    "sim": 0.5614249596673109,
    "dev": 0.28802764780608514,
    "dev_r2": 0.395284621760305,
-   "sigma_sim": 1.094648576730854
+   "sigma_sim": 1.094648576730854,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c8",
@@ -1717,7 +1842,12 @@
    "sim": 0.6353176285885795,
    "dev": 0.24877763832429,
    "dev_r2": 0.40852117196277726,
-   "sigma_sim": 1.0011075774412785
+   "sigma_sim": 1.0011075774412785,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c9",
@@ -1771,7 +1901,12 @@
    "sim": 0.6226096410937179,
    "dev": 0.2474066057791765,
    "dev_r2": 0.5883753974668053,
-   "sigma_sim": 0.9874737480337514
+   "sigma_sim": 0.9874737480337514,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c10",
@@ -1828,7 +1963,12 @@
    "sim": 0.710541487355458,
    "dev": 0.1522498455465886,
    "dev_r2": 0.7060591233239832,
-   "sigma_sim": 0.8919219845119564
+   "sigma_sim": 0.8919219845119564,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c11",
@@ -1888,7 +2028,12 @@
    "sim": 0.7114713471420402,
    "dev": 0.1465226257721154,
    "dev_r2": 0.7067768155918747,
-   "sigma_sim": 0.8846410513018617
+   "sigma_sim": 0.8846410513018617,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c12",
@@ -1953,7 +2098,12 @@
    "sim": 0.7211117042220738,
    "dev": 0.1533296732324736,
    "dev_r2": 0.7336575872013733,
-   "sigma_sim": 0.8760596169325214
+   "sigma_sim": 0.8760596169325214,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c14",
@@ -2025,7 +2175,12 @@
    "sim": 0.7332290696918509,
    "dev": 0.1485913583675869,
    "dev_r2": 0.7555866135451156,
-   "sigma_sim": 0.8568374633352439
+   "sigma_sim": 0.8568374633352439,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c15",
@@ -2100,7 +2255,12 @@
    "sim": 0.7357515453392223,
    "dev": 0.1467775421764056,
    "dev_r2": 0.7626337683339961,
-   "sigma_sim": 0.8526375769506104
+   "sigma_sim": 0.8526375769506104,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c16",
@@ -2180,7 +2340,12 @@
    "sim": 0.737312818836175,
    "dev": 0.2083572538433235,
    "dev_r2": 0.6854092352061978,
-   "sigma_sim": 0.8502719760151755
+   "sigma_sim": 0.8502719760151755,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c17",
@@ -2263,7 +2428,12 @@
    "sim": 0.7412625550981893,
    "dev": 0.177923825405022,
    "dev_r2": 0.7252092638037456,
-   "sigma_sim": 0.84303625294822
+   "sigma_sim": 0.84303625294822,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c18",
@@ -2349,7 +2519,12 @@
    "sim": 0.7405440543139519,
    "dev": 0.14411536167368344,
    "dev_r2": 0.7678464786076872,
-   "sigma_sim": 0.8449746743906426
+   "sigma_sim": 0.8449746743906426,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.138,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c20",
@@ -2442,7 +2617,12 @@
    "sim": 0.7499820496849146,
    "dev": 0.15544161826614455,
    "dev_r2": 0.7521446991593093,
-   "sigma_sim": 0.8287225335960128
+   "sigma_sim": 0.8287225335960128,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.138,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c21",
@@ -2538,7 +2718,12 @@
    "sim": 0.751665436781088,
    "dev": 0.1580123910116638,
    "dev_r2": 0.7530495794854873,
-   "sigma_sim": 0.8266371850299663
+   "sigma_sim": 0.8266371850299663,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.138,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c22",
@@ -2638,7 +2823,12 @@
    "sim": 0.7629506644552768,
    "dev": 0.1285820683769956,
    "dev_r2": 0.771924785352754,
-   "sigma_sim": 0.8079153804676508
+   "sigma_sim": 0.8079153804676508,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.138,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c24",
@@ -2746,7 +2936,12 @@
    "sim": 0.763965892217948,
    "dev": 0.13836268588076195,
    "dev_r2": 0.784423798924219,
-   "sigma_sim": 0.8060263630325235
+   "sigma_sim": 0.8060263630325235,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.0405,
+    "falls_share_bev": 0.0
+   }
   },
   {
    "id": "p2-c25",
@@ -2856,7 +3051,802 @@
    "sim": 0.7494649994944069,
    "dev": 0.12596435571133935,
    "dev_r2": 0.7918761127669341,
-   "sigma_sim": 0.8305838243524125
+   "sigma_sim": 0.8305838243524125,
+   "sign": {
+    "ok": false,
+    "falls_share": 0.138,
+    "falls_share_bev": 0.0
+   }
+  },
+  {
+   "id": "p2s-c2",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 2",
+   "tree": [
+    "sqrt",
+    [
+     "x",
+     6
+    ]
+   ],
+   "consts": [],
+   "complexity": 2,
+   "expr": "sqrt(R)",
+   "js": "Math.sqrt(R)",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.10207950598168691,
+     "dev": 0.33460810018152476
+    }
+   },
+   "sim": 0.10207950598168691,
+   "dev": 0.33460810018152476,
+   "dev_r2": -0.13951914539082133,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.5664707396877517
+  },
+  {
+   "id": "p2s-c3",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 3",
+   "tree": [
+    "-",
+    [
+     "c",
+     0
+    ],
+    [
+     "x",
+     9
+    ]
+   ],
+   "consts": [
+    2.9103180799152395
+   ],
+   "complexity": 3,
+   "expr": "(2.91 - e)",
+   "js": "(2.9103180799152395 - e)",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.23932786242648074,
+     "dev": 0.33791418402468953
+    }
+   },
+   "sim": 0.23932786242648074,
+   "dev": 0.33791418402468953,
+   "dev_r2": 0.1640099451761048,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.4471559254261848
+  },
+  {
+   "id": "p2s-c5",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 5",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "-",
+     [
+      "x",
+      9
+     ],
+     [
+      "c",
+      0
+     ]
+    ]
+   ],
+   "consts": [
+    -0.6680516258297049
+   ],
+   "complexity": 5,
+   "expr": "(M / (e - (-0.6681)))",
+   "js": "(M / (e - -0.6680516258297049))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.44832275994017023,
+     "dev": 0.2557164876527667
+    }
+   },
+   "sim": 0.44832275994017023,
+   "dev": 0.2557164876527667,
+   "dev_r2": 0.4873040833481427,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.2244586461312552
+  },
+  {
+   "id": "p2s-c6",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 6",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "sq",
+     [
+      "-",
+      [
+       "x",
+       9
+      ],
+      [
+       "c",
+       0
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -0.8111952023246712
+   ],
+   "complexity": 6,
+   "expr": "(M / sq((e - (-0.8112))))",
+   "js": "(M / ((e - -0.8111952023246712) * (e - -0.8111952023246712)))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.5081548766650874,
+     "dev": 0.2205969726538598
+    }
+   },
+   "sim": 0.5081548766650874,
+   "dev": 0.2205969726538598,
+   "dev_r2": 0.5114627842293848,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.16374181075819
+  },
+  {
+   "id": "p2s-c7",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 7",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "sq",
+     [
+      "exp",
+      [
+       "-",
+       [
+        "x",
+        9
+       ],
+       [
+        "x",
+        1
+       ]
+      ]
+     ]
+    ]
+   ],
+   "consts": [],
+   "complexity": 7,
+   "expr": "(M / sq(exp((e - K))))",
+   "js": "(M / (Math.exp((e - K)) * Math.exp((e - K))))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.567026573828026,
+     "dev": 0.18844844729960775
+    }
+   },
+   "sim": 0.567026573828026,
+   "dev": 0.18844844729960775,
+   "dev_r2": 0.6116835658005366,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.0798403681933508
+  },
+  {
+   "id": "p2s-c8",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 8",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "^",
+     [
+      "exp",
+      [
+       "-",
+       [
+        "x",
+        9
+       ],
+       [
+        "x",
+        1
+       ]
+      ]
+     ],
+     [
+      "c",
+      0
+     ]
+    ]
+   ],
+   "consts": [
+    2.2092552487240313
+   ],
+   "complexity": 8,
+   "expr": "(M / (exp((e - K)) ^ 2.209))",
+   "js": "(M / Math.pow(Math.exp((e - K)), 2.2092552487240313))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.573198942896274,
+     "dev": 0.1848932239969724
+    }
+   },
+   "sim": 0.573198942896274,
+   "dev": 0.1848932239969724,
+   "dev_r2": 0.6410385122531479,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.081159191644021
+  },
+  {
+   "id": "p2s-c9",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 9",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "sq",
+     [
+      "exp",
+      [
+       "-",
+       [
+        "x",
+        9
+       ],
+       [
+        "*",
+        [
+         "c",
+         0
+        ],
+        [
+         "x",
+         1
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    1.1409734263973357
+   ],
+   "complexity": 9,
+   "expr": "(M / sq(exp((e - (1.141 * K)))))",
+   "js": "(M / (Math.exp((e - (1.1409734263973357 * K))) * Math.exp((e - (1.1409734263973357 * K)))))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.5782726110636278,
+     "dev": 0.16970185447820602
+    }
+   },
+   "sim": 0.5782726110636278,
+   "dev": 0.16970185447820602,
+   "dev_r2": 0.6514325156348331,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 1.077449488814599
+  },
+  {
+   "id": "p2s-c11",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 11",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "sq",
+     [
+      "^",
+      [
+       "exp",
+       [
+        "-",
+        [
+         "x",
+         9
+        ],
+        [
+         "x",
+         1
+        ]
+       ]
+      ],
+      [
+       "^",
+       [
+        "x",
+        1
+       ],
+       [
+        "x",
+        8
+       ]
+      ]
+     ]
+    ]
+   ],
+   "consts": [],
+   "complexity": 11,
+   "expr": "(M / sq((exp((e - K)) ^ (K ^ h))))",
+   "js": "(M / (Math.pow(Math.exp((e - K)), Math.pow(K, h)) * Math.pow(Math.exp((e - K)), Math.pow(K, h))))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.632229227028535,
+     "dev": 0.17762949817669377
+    }
+   },
+   "sim": 0.632229227028535,
+   "dev": 0.17762949817669377,
+   "dev_r2": 0.6278043520132355,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 0.930837206173323
+  },
+  {
+   "id": "p2s-c12",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 12",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "^",
+     [
+      "exp",
+      [
+       "-",
+       [
+        "x",
+        9
+       ],
+       [
+        "*",
+        [
+         "c",
+         0
+        ],
+        [
+         "x",
+         1
+        ]
+       ]
+      ]
+     ],
+     [
+      "^",
+      [
+       "c",
+       1
+      ],
+      [
+       "x",
+       8
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    2.7156770731061424,
+    0.19693265934204232
+   ],
+   "complexity": 12,
+   "expr": "(M / (exp((e - (2.716 * K))) ^ (0.1969 ^ h)))",
+   "js": "(M / Math.pow(Math.exp((e - (2.7156770731061424 * K))), Math.pow(0.19693265934204232, h)))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.6506771843406334,
+     "dev": 0.1556005286418397
+    }
+   },
+   "sim": 0.6506771843406334,
+   "dev": 0.1556005286418397,
+   "dev_r2": 0.7004948194848079,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 0.9745409714876107
+  },
+  {
+   "id": "p2s-c13",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 13",
+   "tree": [
+    "/",
+    [
+     "x",
+     4
+    ],
+    [
+     "sq",
+     [
+      "^",
+      [
+       "exp",
+       [
+        "+",
+        [
+         "x",
+         9
+        ],
+        [
+         "*",
+         [
+          "c",
+          0
+         ],
+         [
+          "x",
+          1
+         ]
+        ]
+       ]
+      ],
+      [
+       "^",
+       [
+        "x",
+        1
+       ],
+       [
+        "x",
+        8
+       ]
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -1.4740303584837675
+   ],
+   "complexity": 13,
+   "expr": "(M / sq((exp((e + ((-1.474) * K))) ^ (K ^ h))))",
+   "js": "(M / (Math.pow(Math.exp((e + (-1.4740303584837675 * K))), Math.pow(K, h)) * Math.pow(Math.exp((e + (-1.4740303584837675 * K))), Math.pow(K, h))))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.7253471745723941,
+     "dev": 0.1414934811041127
+    }
+   },
+   "sim": 0.7253471745723941,
+   "dev": 0.1414934811041127,
+   "dev_r2": 0.7438974286350354,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 0.8695109437688294
+  },
+  {
+   "id": "p2s-c15",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 15",
+   "tree": [
+    "+",
+    [
+     "/",
+     [
+      "x",
+      4
+     ],
+     [
+      "sq",
+      [
+       "^",
+       [
+        "exp",
+        [
+         "+",
+         [
+          "x",
+          9
+         ],
+         [
+          "*",
+          [
+           "c",
+           0
+          ],
+          [
+           "x",
+           1
+          ]
+         ]
+        ]
+       ],
+       [
+        "^",
+        [
+         "x",
+         1
+        ],
+        [
+         "x",
+         8
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     "x",
+     2
+    ]
+   ],
+   "consts": [
+    -1.4647140681767032
+   ],
+   "complexity": 15,
+   "expr": "((M / sq((exp((e + ((-1.465) * K))) ^ (K ^ h)))) + G)",
+   "js": "((M / (Math.pow(Math.exp((e + (-1.4647140681767032 * K))), Math.pow(K, h)) * Math.pow(Math.exp((e + (-1.4647140681767032 * K))), Math.pow(K, h)))) + G)",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.7246769393908851,
+     "dev": 0.15865932666477328
+    }
+   },
+   "sim": 0.7246769393908851,
+   "dev": 0.15865932666477328,
+   "dev_r2": 0.7158883639974792,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 0.8706176907426221
+  },
+  {
+   "id": "p2s-c17",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 17",
+   "tree": [
+    "/",
+    [
+     "+",
+     [
+      "x",
+      4
+     ],
+     [
+      "*",
+      [
+       "x",
+       7
+      ],
+      [
+       "c",
+       0
+      ]
+     ]
+    ],
+    [
+     "sq",
+     [
+      "^",
+      [
+       "exp",
+       [
+        "+",
+        [
+         "x",
+         9
+        ],
+        [
+         "*",
+         [
+          "c",
+          1
+         ],
+         [
+          "x",
+          1
+         ]
+        ]
+       ]
+      ],
+      [
+       "^",
+       [
+        "x",
+        1
+       ],
+       [
+        "x",
+        8
+       ]
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -0.009655055549338097,
+    -1.6330281890064757
+   ],
+   "complexity": 17,
+   "expr": "((M + (T * (-0.009655))) / sq((exp((e + ((-1.633) * K))) ^ (K ^ h))))",
+   "js": "((M + (T * -0.009655055549338097)) / (Math.pow(Math.exp((e + (-1.6330281890064757 * K))), Math.pow(K, h)) * Math.pow(Math.exp((e + (-1.6330281890064757 * K))), Math.pow(K, h))))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.7367728772467581,
+     "dev": 0.12966525030593135
+    }
+   },
+   "sim": 0.7367728772467581,
+   "dev": 0.12966525030593135,
+   "dev_r2": 0.7602956053353892,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 0.8490514265176372
+  },
+  {
+   "id": "p2s-c19",
+   "version": "p2s",
+   "change": "Physics p2, sign-checked search (2026-11-27), complexity 19",
+   "tree": [
+    "/",
+    [
+     "-",
+     [
+      "x",
+      4
+     ],
+     [
+      "*",
+      [
+       "/",
+       [
+        "x",
+        6
+       ],
+       [
+        "x",
+        0
+       ]
+      ],
+      [
+       "c",
+       0
+      ]
+     ]
+    ],
+    [
+     "sq",
+     [
+      "^",
+      [
+       "exp",
+       [
+        "+",
+        [
+         "x",
+         9
+        ],
+        [
+         "*",
+         [
+          "c",
+          1
+         ],
+         [
+          "x",
+          1
+         ]
+        ]
+       ]
+      ],
+      [
+       "^",
+       [
+        "x",
+        1
+       ],
+       [
+        "x",
+        8
+       ]
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -0.270018900122091,
+    -1.1420881181808749
+   ],
+   "complexity": 19,
+   "expr": "((M - ((R / v) * (-0.27))) / sq((exp((e + ((-1.142) * K))) ^ (K ^ h))))",
+   "js": "((M - ((R / v) * -0.270018900122091)) / (Math.pow(Math.exp((e + (-1.1420881181808749 * K))), Math.pow(K, h)) * Math.pow(Math.exp((e + (-1.1420881181808749 * K))), Math.pow(K, h))))",
+   "label": null,
+   "scores": {
+    "p2": {
+     "sim": 0.7572194931403134,
+     "dev": 0.13698805581051804
+    }
+   },
+   "sim": 0.7572194931403134,
+   "dev": 0.13698805581051804,
+   "dev_r2": 0.7727179931702713,
+   "sign": {
+    "ok": true,
+    "falls_share": 0.0,
+    "falls_share_bev": 0.0
+   },
+   "sigma_sim": 0.8169253156036197
   }
  ],
  "history": [
@@ -3166,7 +4156,287 @@
     }
    ],
    "released": "p1-c23"
+  },
+  {
+   "frozen_set": "val_p2",
+   "date": "2026-11-27",
+   "rule": "sign gate (adopted 27 Nov 2026 after the audit): energy may not fall as net grade rises at any val_p2 row",
+   "decisions": [
+    {
+     "id": "r0",
+     "decision": "kept",
+     "why": "First rung (the incumbent to beat)."
+    },
+    {
+     "id": "p1-c2",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.058 beats -0.012, but the dev error 0.3118 is more than 5% worse than 0.282."
+    },
+    {
+     "id": "p1-c3",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.228 beats -0.012, but the dev error 0.3082 is more than 5% worse than 0.282."
+    },
+    {
+     "id": "p1-c4",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.345 beats -0.012, but the dev error 0.3525 is more than 5% worse than 0.282."
+    },
+    {
+     "id": "p1-c5",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.474 > -0.012 + 0.01, dev error 0.2526 vs 0.282 (within 5%)."
+    },
+    {
+     "id": "p1-c7",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.567 > 0.474 + 0.01, dev error 0.1884 vs 0.2526 (within 5%)."
+    },
+    {
+     "id": "p1-c9",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.554 does not beat the incumbent's 0.567 by more than 0.01."
+    },
+    {
+     "id": "p1-c10",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.658 > 0.567 + 0.01, dev error 0.1684 vs 0.1884 (within 5%)."
+    },
+    {
+     "id": "p1-c11",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.696 > 0.658 + 0.01, dev error 0.1601 vs 0.1684 (within 5%)."
+    },
+    {
+     "id": "p1-c12",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.717 beats 0.696, but the dev error 0.1716 is more than 5% worse than 0.1601."
+    },
+    {
+     "id": "p1-c13",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.727 beats 0.696, but the dev error 0.1685 is more than 5% worse than 0.1601."
+    },
+    {
+     "id": "p1-c14",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.728 > 0.696 + 0.01, dev error 0.1674 vs 0.1601 (within 5%)."
+    },
+    {
+     "id": "p1-c17",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.754 > 0.728 + 0.01, dev error 0.1753 vs 0.1674 (within 5%)."
+    },
+    {
+     "id": "p1-c18",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.763 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p1-c19",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.749 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p1-c20",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.764 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p1-c21",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.764 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p1-c23",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 21 % of val_p2 rows (100 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p1-c25",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 21 % of val_p2 rows (100 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2-c2",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.102 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c3",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.239 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c4",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.371 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c5",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.448 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c6",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.419 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c7",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.561 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c8",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.635 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c9",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.623 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c10",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.711 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c11",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.711 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c12",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.721 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c14",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.733 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c15",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.736 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c16",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.737 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c17",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.741 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2-c18",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2-c20",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2-c21",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2-c22",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2-c24",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 4 % of val_p2 rows (0 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2-c25",
+     "decision": "rejected",
+     "why": "Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate."
+    },
+    {
+     "id": "p2s-c2",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.102 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c3",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.239 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c5",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.448 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c6",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.508 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c7",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.567 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c8",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.573 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c9",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.578 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c11",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.632 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c12",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.651 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c13",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.725 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c15",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.725 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c17",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.737 does not beat the incumbent's 0.754 by more than 0.01."
+    },
+    {
+     "id": "p2s-c19",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.757 does not beat the incumbent's 0.754 by more than 0.01."
+    }
+   ],
+   "released": "p1-c17"
   }
  ],
- "released": "p1-c23"
+ "released": "p1-c17",
+ "sign_gate": {
+  "date": "2026-11-27",
+  "check": "E(G + 0.25) >= E(G - 0.25) - 1e-9 at every val_p2 row, other inputs held",
+  "reason": "tank and battery energy rise with uphill grade; v1.0 p1-c23 failed on 21 % of val_p2 rows and every battery-electric row (audit, 25 Nov 2026)",
+  "adopted_before_exam": true,
+  "previous_release": "p1-c23"
+ }
 }
