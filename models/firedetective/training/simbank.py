@@ -288,9 +288,10 @@ def run(name, seed0, n_shards, shard=100):
         LABELS = LABELS + ['waf_fixed']
     d = f'{BANK}/{name}'
     os.makedirs(d, exist_ok=True)
+    part, nparts = (int(v) for v in os.environ.get('SIMBANK_PART', '0/1').split('/'))   # parallel parts (27 Nov 2026)
     for s in range(n_shards):
         fn = f'{d}/shard_{s:03d}.npz'
-        if os.path.exists(fn):
+        if s % nparts != part or os.path.exists(fn):
             continue
         t = time.time()
         S, Sh, St, Lb, M = [], [], [], [], []

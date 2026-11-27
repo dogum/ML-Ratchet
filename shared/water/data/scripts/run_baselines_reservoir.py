@@ -14,6 +14,11 @@ capacity), rule (storage-target rule: R = D + (S - S*(doy)) / 30 d, clipped to [
 storage by day of year), dp (perfect-foresight dynamic programming over 101 storage levels: a lower bound on J with the
 end storage >= start storage).
 Also imitation skill: NSE/KGE of simulated release and storage vs observed for SOP and rule.
+
+27 Nov 2026 (ReservoirPilot audit follow-up): `run_baselines_reservoir.py --causal <out dir>` builds the causal version
+of the task (capacity from GRanD and the calibration half only; split first, then interpolate each half; the split day
+only in the scored half) and writes reservoir_scores.parquet / reservoir_summary.json to <out dir>. Without the flag
+nothing changed: the frozen tables in proc/baselines are the exam definition.
 """
 import json, os, sys
 import numpy as np, pandas as pd
@@ -84,7 +89,16 @@ def dp(I, D, Qmax, cap, S0, nlev=201, nr=21):
     return Rs
 
 
+def _interp(d):
+    d = d.copy()
+    d[['inflow_cms', 'release_cms']] = d[['inflow_cms', 'release_cms']].interpolate(limit=5)
+    d['storage_hm3'] = d.storage_hm3.interpolate(limit=5)
+    return d
+
+
 def main():
+    causal = '--causal' in sys.argv
+    out_dir = sys.argv[sys.argv.index('--causal') + 1] if causal else f'{ROOT}/proc/baselines'
     sp = wd.splits()['reservoirs']
     meta = wd.reservoir_meta().set_index('res_id')
     rows = []
@@ -94,10 +108,12 @@ def main():
         if len(d) < 3650:
             continue
         d = d.asfreq('D')
-        d[['inflow_cms', 'release_cms']] = d[['inflow_cms', 'release_cms']].interpolate(limit=5)
-        d['storage_hm3'] = d.storage_hm3.interpolate(limit=5)
         half = d.index[len(d) // 2]
-        cal, ev = d.loc[:half], d.loc[half:].dropna()
+        if causal:
+            cal, ev = _interp(d.loc[:half - pd.Timedelta('1D')]), _interp(d.loc[half:]).dropna()
+        else:
+            d = _interp(d)
+            cal, ev = d.loc[:half], d.loc[half:].dropna()
         # longest contiguous block in the evaluation half
         blk = (ev.index.to_series().diff() != pd.Timedelta('1D')).cumsum()
         ev = ev[blk == blk.value_counts().idxmax()]
@@ -105,7 +121,7 @@ def main():
             continue
         ev = ev.iloc[:3653]                                  # score at most 10 years
         cap = float(meta.loc[rid, 'cap_hm3'])
-        cap = max(cap, float(d.storage_hm3.max()))
+        cap = float(np.nanmax([cap, float(cal.storage_hm3.max())])) if causal else max(cap, float(d.storage_hm3.max()))
         Dc = doy_curve(cal.release_cms.dropna()); Sc = doy_curve(cal.storage_hm3.dropna())
         Qmax = float(cal.release_cms.quantile(0.99))
         I = ev.inflow_cms.values.astype(float); D = Dc.reindex(ev.index.dayofyear).values; Ss = Sc.reindex(ev.index.dayofyear).values
@@ -127,8 +143,8 @@ def main():
             rows.append(r)
         print(rid, len(ev), {p: round(float(np.mean(cost(v[0], D, Qmax))), 4) for p, v in res.items()}, flush=True)
     sc = pd.DataFrame(rows)
-    os.makedirs(f'{ROOT}/proc/baselines', exist_ok=True)
-    sc.to_parquet(f'{ROOT}/proc/baselines/reservoir_scores.parquet')
+    os.makedirs(out_dir, exist_ok=True)
+    sc.to_parquet(f'{out_dir}/reservoir_scores.parquet')
     e = sc[sc.split == 'exam']
     summ = {}
     for pol, g in e.groupby('policy'):
@@ -138,7 +154,7 @@ def main():
         for c in ['release_nse', 'release_kge', 'storage_nse', 'storage_kge']:
             if c in g and g[c].notna().any():
                 summ[pol][c + '_median'] = float(g[c].median())
-    json.dump(summ, open(f'{ROOT}/proc/baselines/reservoir_summary.json', 'w'), indent=1)
+    json.dump(summ, open(f'{out_dir}/reservoir_summary.json', 'w'), indent=1)
     print(pd.DataFrame(summ).T.round(4))
 
 

@@ -142,8 +142,8 @@ def main():
     tensors['sig_scale'] = W['sig_scale']
     keep['sig_scale'] = 'f32'
     meta = {'names': names, 'targets': det.targets, 'n_members': n_members, 'n_layers': int(W['m0_n_layers']),
-            'cls_temp': float(W['cls_temp']), 'units': UNITS, 'version': '1.0',
-            'note': 'BasinDetective v1.0, 5-member ensemble; matrices float16, normalisation float32'}
+            'cls_temp': float(W['cls_temp']), 'units': UNITS, 'version': '1.1',
+            'note': 'BasinDetective v1.1 (symmetric precipitation-change prior), 5-member ensemble; matrices float16, normalisation float32'}
     write_pack(out / 'weights', tensors, dtype='f16', meta=meta, keep=keep)
     # the weights the browser sees, back in the model's own class
     Wr = {k: v for k, v in W.items()}

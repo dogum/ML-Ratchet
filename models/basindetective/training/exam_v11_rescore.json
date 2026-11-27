@@ -1,0 +1,1522 @@
+{
+ "method": "paired bootstrap over the 619 exam basins: 10000 resamples with replacement, numpy default_rng(20261118).integers, the same resamples for every row (a comparison restricted to the basins where model, truth and baseline are all finite re-draws with the same seed); 95 % percentile intervals of BasinDetective minus the baseline. Verdict per baseline: win or loss only if the interval excludes 0; row: loss if any baseline wins, win only if it beats every baseline, else tie.",
+ "model": "weights/basindetective_v1.npz (as released)",
+ "n_basins": 619,
+ "changes": {
+  "d_logq": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": -0.025311426904673806,
+      "lo": -0.05078213736603517,
+      "hi": 0.0013062233774912974,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.7928016000267144,
+      "model": 0.7674901731220406,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": 0.06910102723698397,
+      "lo": 0.02503085194863431,
+      "hi": 0.11662737213055029,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.6983891458850566,
+      "model": 0.7674901731220406,
+      "verdict": "win"
+     },
+     "Budyko-Fu": {
+      "value": -0.0005729921116820469,
+      "lo": -0.02403868693957283,
+      "hi": 0.023279536898076873,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.7680631652337226,
+      "model": 0.7674901731220406,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": 0.006245290679024185,
+      "lo": -0.0023752152157267086,
+      "hi": 0.015756136789364213,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.08618314457677634,
+      "model": 0.09242843525580052,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": -0.018988552914595724,
+      "lo": -0.02935128082807681,
+      "hi": -0.008543683545869934,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.11141698817039625,
+      "model": 0.09242843525580052,
+      "verdict": "win"
+     },
+     "no change": {
+      "value": -0.09194212271715327,
+      "lo": -0.10867354010508753,
+      "hi": -0.07463083125643141,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.1843705579729538,
+      "model": 0.09242843525580052,
+      "verdict": "win"
+     },
+     "Budyko-Fu": {
+      "value": 0.015066195578638475,
+      "lo": 0.005921604342142395,
+      "hi": 0.022119675254795662,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.07736223967716205,
+      "model": 0.09242843525580052,
+      "verdict": "loss"
+     }
+    },
+    "verdict": "loss"
+   }
+  },
+  "d_rr": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": -0.05928062547970703,
+      "lo": -0.11102425697622757,
+      "hi": -0.008354079472074423,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.49875854238902045,
+      "model": 0.4394779169093134,
+      "verdict": "loss"
+     },
+     "GR4J vs own record": {
+      "value": 0.11425427290210255,
+      "lo": 0.043548094774396834,
+      "hi": 0.18430566145943644,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.3252236440072109,
+      "model": 0.4394779169093134,
+      "verdict": "win"
+     },
+     "Budyko-Fu": {
+      "value": -0.02573413796159363,
+      "lo": -0.07763791171411591,
+      "hi": 0.026541326143121595,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.46521205487090705,
+      "model": 0.4394779169093134,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "loss"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": -0.0006587455914841833,
+      "lo": -0.00397048193213971,
+      "hi": 0.001938550762900379,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.03309532394082232,
+      "model": 0.032436578349338135,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": -0.010634128385750702,
+      "lo": -0.014700535700809564,
+      "hi": -0.0075723945235260555,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.04307070673508884,
+      "model": 0.032436578349338135,
+      "verdict": "win"
+     },
+     "no change": {
+      "value": -0.005642642747275009,
+      "lo": -0.009430197910035791,
+      "hi": -0.0007432770874675162,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.038079221096613144,
+      "model": 0.032436578349338135,
+      "verdict": "win"
+     },
+     "Budyko-Fu": {
+      "value": 0.0011067072454127025,
+      "lo": -0.001407510220957156,
+      "hi": 0.0035137921600384347,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.03132987110392543,
+      "model": 0.032436578349338135,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "d_bfi": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": -0.01949817527942535,
+      "lo": -0.10442122470867085,
+      "hi": 0.06385184565529291,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.23244501426029376,
+      "model": 0.2129468389808684,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": -0.03806342326990536,
+      "lo": -0.12544146604858314,
+      "hi": 0.046187787778141136,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.2510102622507738,
+      "model": 0.2129468389808684,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": -0.0008924663972882871,
+      "lo": -0.0033516294436156703,
+      "hi": 0.0017514497598561315,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.02066509646748138,
+      "model": 0.019772630070193094,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": -0.04560368171969197,
+      "lo": -0.05097255447416106,
+      "hi": -0.03978885686462304,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.06537631178988507,
+      "model": 0.019772630070193094,
+      "verdict": "win"
+     },
+     "no change": {
+      "value": 0.0017138766944495357,
+      "lo": -0.0003153954828430394,
+      "hi": 0.0033185084586952254,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.018058753375743558,
+      "model": 0.019772630070193094,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "d_logq5": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": 0.039447695030134455,
+      "lo": -0.029410394189236154,
+      "hi": 0.10919542076844044,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.4207752338232164,
+      "model": 0.46022292885335087,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": 0.5041754556329349,
+      "lo": 0.40435441554775425,
+      "hi": 0.5990399402020465,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": -0.04395252677958397,
+      "model": 0.46022292885335087,
+      "verdict": "win"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": -0.043805744095817264,
+      "lo": -0.0727603580451561,
+      "hi": -0.025494685198115652,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.163434312064775,
+      "model": 0.11962856796895772,
+      "verdict": "win"
+     },
+     "GR4J vs own record": {
+      "value": -0.5148440226330835,
+      "lo": -0.6031865240563179,
+      "hi": -0.4599161107895997,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.6344725906020412,
+      "model": 0.11962856796895772,
+      "verdict": "win"
+     },
+     "no change": {
+      "value": -0.009583137725966737,
+      "lo": -0.02750082723747199,
+      "hi": 0.015535187274366286,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.12921170569492446,
+      "model": 0.11962856796895772,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "d_logq95": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": 0.006738818146068137,
+      "lo": -0.02504667957832911,
+      "hi": 0.03871209568597204,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.7223180708706642,
+      "model": 0.7290568890167324,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": 0.05536050631765044,
+      "lo": -0.0002292124944469583,
+      "hi": 0.1141531132520463,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.6736963826990819,
+      "model": 0.7290568890167324,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": 0.006736389032054119,
+      "lo": -0.00398787739017556,
+      "hi": 0.016076526737315532,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.11056033402257603,
+      "model": 0.11729672305463015,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": -0.002973586895773511,
+      "lo": -0.015816597625362843,
+      "hi": 0.012061632155898963,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.12027030995040366,
+      "model": 0.11729672305463015,
+      "verdict": "tie"
+     },
+     "no change": {
+      "value": -0.08635846740569639,
+      "lo": -0.11114955774812184,
+      "hi": -0.06369460119655211,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.20365519046032654,
+      "model": 0.11729672305463015,
+      "verdict": "win"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "d_hfd": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": 0.08344255024144853,
+      "lo": 0.021239964723221982,
+      "hi": 0.14632181527762184,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.5650226881714181,
+      "model": 0.6484652384128666,
+      "verdict": "win"
+     },
+     "GR4J vs own record": {
+      "value": -0.030835051104082245,
+      "lo": -0.08679830193612595,
+      "hi": 0.024519831034814886,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.6793002895169489,
+      "model": 0.6484652384128666,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "GR4J model-implied": {
+      "value": 0.307916873256719,
+      "lo": -0.5229576170995474,
+      "hi": 0.9798927084530282,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 5.7666666666666515,
+      "model": 6.0745835399233705,
+      "verdict": "tie"
+     },
+     "GR4J vs own record": {
+      "value": -0.8254164600766067,
+      "lo": -1.6546014015993702,
+      "hi": 0.14970277507511298,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 6.899999999999977,
+      "model": 6.0745835399233705,
+      "verdict": "tie"
+     },
+     "no change": {
+      "value": -2.203194237854401,
+      "lo": -2.952202346217355,
+      "hi": -1.5008420467534451,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 8.277777777777771,
+      "model": 6.0745835399233705,
+      "verdict": "win"
+     }
+    },
+    "verdict": "tie"
+   }
+  }
+ },
+ "levels": {
+  "q_mean": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.01135500870998607,
+      "lo": 0.007629591147209578,
+      "hi": 0.015949575028433045,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9711785726753851,
+      "model": 0.9825335813853712,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.0040366472093893435,
+      "lo": 0.0013756854138000153,
+      "hi": 0.007030998765600789,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9784969341759818,
+      "model": 0.9825335813853712,
+      "verdict": "win"
+     }
+    },
+    "verdict": "win"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": -0.08253145818391339,
+      "lo": -0.10299624374266231,
+      "hi": -0.058203356278591745,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.18506584087589206,
+      "model": 0.10253438269197868,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": -0.029722995165369803,
+      "lo": -0.04060244413390012,
+      "hi": -0.01929730225571862,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.13225737785734848,
+      "model": 0.10253438269197868,
+      "verdict": "win"
+     }
+    },
+    "verdict": "win"
+   }
+  },
+  "runoff_ratio": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.0037065126814664895,
+      "lo": 0.0007695848181269949,
+      "hi": 0.0068925759440027325,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9717256599781328,
+      "model": 0.9754321726595993,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.010001583633827416,
+      "lo": 0.005366138302112408,
+      "hi": 0.015602257631847402,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9654305890257718,
+      "model": 0.9754321726595993,
+      "verdict": "win"
+     }
+    },
+    "verdict": "win"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": -0.005642642747274981,
+      "lo": -0.009430197910035819,
+      "hi": -0.0007432770874675164,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.038079221096613144,
+      "model": 0.03243657834933816,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": -0.010634128385750674,
+      "lo": -0.014700535700809583,
+      "hi": -0.00757239452352607,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.04307070673508884,
+      "model": 0.03243657834933816,
+      "verdict": "win"
+     }
+    },
+    "verdict": "win"
+   }
+  },
+  "bfi_lh": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.0012313891403196164,
+      "lo": -0.0016212093880038775,
+      "hi": 0.005112448489848388,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9779515671144523,
+      "model": 0.9791829562547719,
+      "verdict": "tie"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.19196657470122203,
+      "lo": 0.158272630219186,
+      "hi": 0.22946370332078384,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.7872163815535499,
+      "model": 0.9791829562547719,
+      "verdict": "win"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.0017138766944495287,
+      "lo": -0.0003153954828430394,
+      "hi": 0.0033185084586951907,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.018058753375743558,
+      "model": 0.019772630070193087,
+      "verdict": "tie"
+     },
+     "GR4J sim (gauged)": {
+      "value": -0.04560368171969198,
+      "lo": -0.05097255447416105,
+      "hi": -0.039788856864623016,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.06537631178988507,
+      "model": 0.019772630070193087,
+      "verdict": "win"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "q5": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.005647914384715902,
+      "lo": 0.0015492284762096409,
+      "hi": 0.01008884714291097,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9706868248297678,
+      "model": 0.9763347392144837,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.1984347504605728,
+      "lo": 0.16634825209808274,
+      "hi": 0.23548445304782986,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.7778999887539109,
+      "model": 0.9763347392144837,
+      "verdict": "win"
+     }
+    },
+    "verdict": "win"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": -0.007794969948022257,
+      "lo": -0.008657426742683827,
+      "hi": 0.0028310262460604307,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.019999995827674866,
+      "model": 0.012205025879652609,
+      "verdict": "tie"
+     },
+     "GR4J sim (gauged)": {
+      "value": -0.06621999111959209,
+      "lo": -0.07688964614728522,
+      "hi": -0.056091604848299725,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.0784250169992447,
+      "model": 0.012205025879652609,
+      "verdict": "win"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "q95": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.010334151873032105,
+      "lo": 0.005986720450283156,
+      "hi": 0.015463692340596283,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9634250946084639,
+      "model": 0.973759246481496,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.007365878807533588,
+      "lo": 0.00218255827894053,
+      "hi": 0.013315936320779292,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9663933676739624,
+      "model": 0.973759246481496,
+      "verdict": "win"
+     }
+    },
+    "verdict": "win"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": -0.18913178336563208,
+      "lo": -0.3024785787932475,
+      "hi": -0.11375339683827633,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.6600000858306885,
+      "model": 0.4708683024650564,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.03370585548934857,
+      "lo": -0.05468323042101986,
+      "hi": 0.10925871626273587,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.43716244697570783,
+      "model": 0.4708683024650564,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   }
+  },
+  "hfd_mean": {
+   "rho": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": 0.04432739021087018,
+      "lo": 0.028592367967937148,
+      "hi": 0.06173217285558703,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.8700479560859502,
+      "model": 0.9143753462968204,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": 0.004990514701445292,
+      "lo": -0.018095003057995347,
+      "hi": 0.026784243163532694,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 0.9093848315953751,
+      "model": 0.9143753462968204,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   },
+   "mae": {
+    "model": null,
+    "vs": {
+     "own 1999-2008 value": {
+      "value": -2.2031942378544045,
+      "lo": -2.9522023462173435,
+      "hi": -1.5008420467534336,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 8.277777777777771,
+      "model": 6.074583539923367,
+      "verdict": "win"
+     },
+     "GR4J sim (gauged)": {
+      "value": -0.8254164600766103,
+      "lo": -1.6546014015993649,
+      "hi": 0.1497027750751272,
+      "n_boot": 10000,
+      "n": 619,
+      "baseline": 6.899999999999977,
+      "model": 6.074583539923367,
+      "verdict": "tie"
+     }
+    },
+    "verdict": "tie"
+   }
+  }
+ },
+ "regulation": {
+  "dor>0.1 (mid+high)": {
+   "n_pos": 37,
+   "auc": {
+    "value": 0.48328225132348845,
+    "lo": 0.3920871917243931,
+    "hi": 0.5740966980774982,
+    "n_boot": 10000
+   },
+   "vs": {
+    "GR4J misfit (1-NSE_cal)": {
+     "value": 0.04987461688492617,
+     "lo": -0.06837014016739215,
+     "hi": 0.17068236084294885,
+     "n_boot": 10000,
+     "baseline": 0.4334076344385623,
+     "verdict": "tie"
+    },
+    "seasonal damping index": {
+     "value": 0.014395839138107214,
+     "lo": -0.10623894031633102,
+     "hi": 0.12984348215233843,
+     "n_boot": 10000,
+     "baseline": 0.46888641218538124,
+     "verdict": "tie"
+    },
+    "chance (AUC 0.5)": {
+     "value": -0.016717748676511546,
+     "lo": -0.1079128082756069,
+     "hi": 0.07409669807749814,
+     "n_boot": 10000,
+     "baseline": 0.5,
+     "verdict": "tie"
+    }
+   },
+   "verdict": "tie",
+   "at_chance": true
+  },
+  "dor>0.5 (high)": {
+   "n_pos": 16,
+   "auc": {
+    "value": 0.5172056384742952,
+    "lo": 0.3737281402677763,
+    "hi": 0.6635792464114832,
+    "n_boot": 10000
+   },
+   "vs": {
+    "GR4J misfit (1-NSE_cal)": {
+     "value": 0.08613184079601993,
+     "lo": -0.10955928776718081,
+     "hi": 0.27519992383853764,
+     "n_boot": 10000,
+     "baseline": 0.4310737976782753,
+     "verdict": "tie"
+    },
+    "seasonal damping index": {
+     "value": 0.03524046434494199,
+     "lo": -0.12193667231028213,
+     "hi": 0.18374882954036556,
+     "n_boot": 10000,
+     "baseline": 0.48196517412935325,
+     "verdict": "tie"
+    },
+    "chance (AUC 0.5)": {
+     "value": 0.017205638474295237,
+     "lo": -0.1262718597322237,
+     "hi": 0.1635792464114832,
+     "n_boot": 10000,
+     "baseline": 0.5,
+     "verdict": "tie"
+    }
+   },
+   "verdict": "tie",
+   "at_chance": true
+  },
+  "dor>0 (any)": {
+   "n_pos": 53,
+   "auc": {
+    "value": 0.4371624774984999,
+    "lo": 0.3529463367042555,
+    "hi": 0.5226567644059109,
+    "n_boot": 10000
+   },
+   "vs": {
+    "GR4J misfit (1-NSE_cal)": {
+     "value": 0.04346956463764251,
+     "lo": -0.05632336757153335,
+     "hi": 0.14244048611530866,
+     "n_boot": 10000,
+     "baseline": 0.3936929128608574,
+     "verdict": "tie"
+    },
+    "seasonal damping index": {
+     "value": -0.06857123808253884,
+     "lo": -0.18253948634766484,
+     "hi": 0.04695967397583701,
+     "n_boot": 10000,
+     "baseline": 0.5057337155810387,
+     "verdict": "tie"
+    },
+    "chance (AUC 0.5)": {
+     "value": -0.0628375225015001,
+     "lo": -0.14705366329574449,
+     "hi": 0.022656764405910884,
+     "n_boot": 10000,
+     "baseline": 0.5,
+     "verdict": "tie"
+    }
+   },
+   "verdict": "tie",
+   "at_chance": true
+  },
+  "NWIS peak code 5/6 in >=1/3 of WY1990-2008 peaks": {
+   "n_pos": 11,
+   "auc": {
+    "value": 0.6925837320574163,
+    "lo": 0.5173389361692856,
+    "hi": 0.8525472163548298,
+    "n_boot": 10000
+   },
+   "vs": {
+    "GR4J misfit (1-NSE_cal)": {
+     "value": 0.08507775119617234,
+     "lo": -0.13133101897903154,
+     "hi": 0.27603037766830857,
+     "n_boot": 10000,
+     "baseline": 0.607505980861244,
+     "verdict": "tie"
+    },
+    "seasonal damping index": {
+     "value": 0.05367822966507185,
+     "lo": -0.08567072177708294,
+     "hi": 0.1975207954763336,
+     "n_boot": 10000,
+     "baseline": 0.6389055023923444,
+     "verdict": "tie"
+    },
+    "chance (AUC 0.5)": {
+     "value": 0.1925837320574163,
+     "lo": 0.01733893616928566,
+     "hi": 0.35254721635482983,
+     "n_boot": 10000,
+     "baseline": 0.5,
+     "verdict": "win"
+    }
+   },
+   "verdict": "tie",
+   "at_chance": false
+  }
+ },
+ "coverage": {
+  "d_logq": {
+   "cov68": {
+    "value": 0.8804523424878837,
+    "lo": 0.8546042003231018,
+    "hi": 0.9063004846526656,
+    "n_boot": 10000
+   },
+   "cov95": {
+    "value": 0.9854604200323102,
+    "lo": 0.975767366720517,
+    "hi": 0.9935379644588045,
+    "n_boot": 10000
+   }
+  },
+  "d_rr": {
+   "cov68": {
+    "value": 0.8319870759289176,
+    "lo": 0.802907915993538,
+    "hi": 0.8610662358642972,
+    "n_boot": 10000
+   },
+   "cov95": {
+    "value": 0.9789983844911146,
+    "lo": 0.9676898222940227,
+    "hi": 0.9886914378029079,
+    "n_boot": 10000
+   }
+  },
+  "d_bfi": {
+   "cov68": {
+    "value": 0.72859450726979,
+    "lo": 0.6930533117932148,
+    "hi": 0.7641357027463651,
+    "n_boot": 10000
+   },
+   "cov95": {
+    "value": 0.9450726978998385,
+    "lo": 0.925686591276252,
+    "hi": 0.962843295638126,
+    "n_boot": 10000
+   }
+  },
+  "d_logq5": {
+   "cov68": {
+    "value": 0.7980613893376414,
+    "lo": 0.7657512116316639,
+    "hi": 0.8287560581583199,
+    "n_boot": 10000
+   },
+   "cov95": {
+    "value": 0.9531502423263328,
+    "lo": 0.9353796445880452,
+    "hi": 0.9693053311793215,
+    "n_boot": 10000
+   }
+  },
+  "d_logq95": {
+   "cov68": {
+    "value": 0.7948303715670436,
+    "lo": 0.7625201938610663,
+    "hi": 0.827140549273021,
+    "n_boot": 10000
+   },
+   "cov95": {
+    "value": 0.9854604200323102,
+    "lo": 0.975767366720517,
+    "hi": 0.9935379644588045,
+    "n_boot": 10000
+   }
+  },
+  "d_hfd": {
+   "cov68": {
+    "value": 0.8239095315024233,
+    "lo": 0.7932148626817448,
+    "hi": 0.8529886914378029,
+    "n_boot": 10000
+   },
+   "cov95": {
+    "value": 0.9903069466882067,
+    "lo": 0.9822294022617124,
+    "hi": 0.9967689822294022,
+    "n_boot": 10000
+   }
+  }
+ },
+ "exam_json_differences": [
+  {
+   "path": "delta/d_logq/BasinDetective/rho",
+   "shipped": 0.7568837223186626,
+   "rescored": 0.7674901731220406
+  },
+  {
+   "path": "delta/d_logq/BasinDetective/mae",
+   "shipped": 0.08281463054448729,
+   "rescored": 0.09242843525580052
+  },
+  {
+   "path": "delta/d_logq/BasinDetective/r2",
+   "shipped": 0.5030372602445286,
+   "rescored": 0.5149622095266781
+  },
+  {
+   "path": "delta/d_logq/BasinDetective/cov68",
+   "shipped": 0.8126009693053312,
+   "rescored": 0.8804523424878837
+  },
+  {
+   "path": "delta/d_logq/BasinDetective/cov95",
+   "shipped": 0.9709208400646203,
+   "rescored": 0.9854604200323102
+  },
+  {
+   "path": "delta/d_logq/Budyko-Fu (w fitted on cal)/r2",
+   "shipped": 0.4474108463618641,
+   "rescored": 0.44741096350116616
+  },
+  {
+   "path": "delta/d_rr/BasinDetective/rho",
+   "shipped": 0.4525392531218584,
+   "rescored": 0.4394779169093134
+  },
+  {
+   "path": "delta/d_rr/BasinDetective/mae",
+   "shipped": 0.029624902334032907,
+   "rescored": 0.032436578349338135
+  },
+  {
+   "path": "delta/d_rr/BasinDetective/r2",
+   "shipped": 0.12539189756746238,
+   "rescored": 0.10481082868242986
+  },
+  {
+   "path": "delta/d_rr/BasinDetective/cov68",
+   "shipped": 0.7738287560581584,
+   "rescored": 0.8319870759289176
+  },
+  {
+   "path": "delta/d_rr/BasinDetective/cov95",
+   "shipped": 0.9644588045234249,
+   "rescored": 0.9789983844911146
+  },
+  {
+   "path": "delta/d_rr/Budyko-Fu (w fitted on cal)/r2",
+   "shipped": 0.11001093649354776,
+   "rescored": 0.11001094622718433
+  },
+  {
+   "path": "delta/d_bfi/BasinDetective/rho",
+   "shipped": 0.20304062754399646,
+   "rescored": 0.2129468389808684
+  },
+  {
+   "path": "delta/d_bfi/BasinDetective/mae",
+   "shipped": 0.018460675581517975,
+   "rescored": 0.019772630070193094
+  },
+  {
+   "path": "delta/d_bfi/BasinDetective/r2",
+   "shipped": 0.046078941387596495,
+   "rescored": -0.011031115071843622
+  },
+  {
+   "path": "delta/d_bfi/BasinDetective/cov68",
+   "shipped": 0.7657512116316639,
+   "rescored": 0.72859450726979
+  },
+  {
+   "path": "delta/d_bfi/BasinDetective/cov95",
+   "shipped": 0.9579967689822294,
+   "rescored": 0.9450726978998385
+  },
+  {
+   "path": "delta/d_logq5/BasinDetective/rho",
+   "shipped": 0.44017014374008145,
+   "rescored": 0.4602229288533509
+  },
+  {
+   "path": "delta/d_logq5/BasinDetective/mae",
+   "shipped": 0.12634942124497364,
+   "rescored": 0.11962856796895772
+  },
+  {
+   "path": "delta/d_logq5/BasinDetective/r2",
+   "shipped": 0.21649651919471813,
+   "rescored": 0.2724790638071828
+  },
+  {
+   "path": "delta/d_logq5/BasinDetective/cov68",
+   "shipped": 0.7754442649434572,
+   "rescored": 0.7980613893376414
+  },
+  {
+   "path": "delta/d_logq5/BasinDetective/cov95",
+   "shipped": 0.9483037156704361,
+   "rescored": 0.9531502423263328
+  },
+  {
+   "path": "delta/d_logq95/BasinDetective/rho",
+   "shipped": 0.7093224816455987,
+   "rescored": 0.7290568890167324
+  },
+  {
+   "path": "delta/d_logq95/BasinDetective/mae",
+   "shipped": 0.10839541056351754,
+   "rescored": 0.11729672305463015
+  },
+  {
+   "path": "delta/d_logq95/BasinDetective/r2",
+   "shipped": 0.48352580005396784,
+   "rescored": 0.5060602338882965
+  },
+  {
+   "path": "delta/d_logq95/BasinDetective/cov68",
+   "shipped": 0.7318255250403877,
+   "rescored": 0.7948303715670436
+  },
+  {
+   "path": "delta/d_logq95/BasinDetective/cov95",
+   "shipped": 0.9596122778675282,
+   "rescored": 0.9854604200323102
+  },
+  {
+   "path": "delta/d_hfd/BasinDetective/rho",
+   "shipped": 0.6304200233369786,
+   "rescored": 0.6484652384128667
+  },
+  {
+   "path": "delta/d_hfd/BasinDetective/mae",
+   "shipped": 5.968295760787758,
+   "rescored": 6.0745835399233705
+  },
+  {
+   "path": "delta/d_hfd/BasinDetective/r2",
+   "shipped": 0.45973910043094135,
+   "rescored": 0.4675909150394424
+  },
+  {
+   "path": "delta/d_hfd/BasinDetective/cov68",
+   "shipped": 0.8255250403877221,
+   "rescored": 0.8239095315024233
+  },
+  {
+   "path": "delta/d_hfd/BasinDetective/cov95",
+   "shipped": 0.9919224555735057,
+   "rescored": 0.9903069466882067
+  },
+  {
+   "path": "level/q_mean/BasinDetective/rho",
+   "shipped": 0.9822731672221192,
+   "rescored": 0.9825335813853712
+  },
+  {
+   "path": "level/q_mean/BasinDetective/mae",
+   "shipped": 0.0861211627297831,
+   "rescored": 0.10253438269197868
+  },
+  {
+   "path": "level/q_mean/BasinDetective/r2",
+   "shipped": 0.9855094565814306,
+   "rescored": 0.986701639901543
+  },
+  {
+   "path": "level/runoff_ratio/BasinDetective/rho",
+   "shipped": 0.9755383216618341,
+   "rescored": 0.9754321726595993
+  },
+  {
+   "path": "level/runoff_ratio/BasinDetective/mae",
+   "shipped": 0.02962490233403292,
+   "rescored": 0.03243657834933816
+  },
+  {
+   "path": "level/runoff_ratio/BasinDetective/r2",
+   "shipped": 0.9709622333478567,
+   "rescored": 0.9702789235613671
+  },
+  {
+   "path": "level/bfi_lh/BasinDetective/rho",
+   "shipped": 0.9790316762182218,
+   "rescored": 0.9791829562547719
+  },
+  {
+   "path": "level/bfi_lh/BasinDetective/mae",
+   "shipped": 0.018460675581517982,
+   "rescored": 0.019772630070193087
+  },
+  {
+   "path": "level/bfi_lh/BasinDetective/r2",
+   "shipped": 0.9599352612657192,
+   "rescored": 0.9575366356451926
+  },
+  {
+   "path": "level/q5/BasinDetective/rho",
+   "shipped": 0.9753194103668119,
+   "rescored": 0.9763347392144837
+  },
+  {
+   "path": "level/q5/BasinDetective/mae",
+   "shipped": 0.012743371194663823,
+   "rescored": 0.012205025879652609
+  },
+  {
+   "path": "level/q5/BasinDetective/r2",
+   "shipped": 0.9650887819831045,
+   "rescored": 0.968126247032263
+  },
+  {
+   "path": "level/q95/BasinDetective/rho",
+   "shipped": 0.9730386416834665,
+   "rescored": 0.973759246481496
+  },
+  {
+   "path": "level/q95/BasinDetective/mae",
+   "shipped": 0.3960240992942543,
+   "rescored": 0.4708683024650564
+  },
+  {
+   "path": "level/q95/BasinDetective/r2",
+   "shipped": 0.9705844677796102,
+   "rescored": 0.9723771366550799
+  },
+  {
+   "path": "level/hfd_mean/BasinDetective/rho",
+   "shipped": 0.9131948532512375,
+   "rescored": 0.9143753462968203
+  },
+  {
+   "path": "level/hfd_mean/BasinDetective/mae",
+   "shipped": 5.968295760787754,
+   "rescored": 6.074583539923367
+  },
+  {
+   "path": "level/hfd_mean/BasinDetective/r2",
+   "shipped": 0.8795050995560576,
+   "rescored": 0.8812562972094696
+  },
+  {
+   "path": "regulation/dor>0.1 (mid+high)/BasinDetective_auc",
+   "shipped": 0.4850469025726758,
+   "rescored": 0.48328225132348845
+  },
+  {
+   "path": "regulation/dor>0.5 (high)/BasinDetective_auc",
+   "shipped": 0.5320273631840795,
+   "rescored": 0.5172056384742951
+  },
+  {
+   "path": "regulation/dor>0.5 (high)/BasinDetective_precision_at_n",
+   "shipped": 0.0,
+   "rescored": 0.0625
+  },
+  {
+   "path": "regulation/dor>0 (any)/BasinDetective_auc",
+   "shipped": 0.4412960864057603,
+   "rescored": 0.4371624774984999
+  },
+  {
+   "path": "regulation/dor>0 (any)/BasinDetective_precision_at_n",
+   "shipped": 0.07547169811320754,
+   "rescored": 0.05660377358490566
+  },
+  {
+   "path": "regulation/NWIS peak code 5/6 in >=1/3 of WY1990-2008 peaks/BasinDetective_auc",
+   "shipped": 0.7112739234449761,
+   "rescored": 0.6925837320574163
+  },
+  {
+   "path": "regulation/NWIS peak code 5/6 in >=1/3 of WY1990-2008 peaks/BasinDetective_precision_at_n",
+   "shipped": 0.0,
+   "rescored": 0.09090909090909091
+  },
+  {
+   "path": "regulation/log10 dor among regulated basins/rho",
+   "shipped": 0.23563091061789002,
+   "rescored": 0.21135818505458237
+  },
+  {
+   "path": "regulation/log10 dor among regulated basins/mae",
+   "shipped": 0.4795225836917062,
+   "rescored": 0.4732327353603103
+  },
+  {
+   "path": "regulation/log10 dor among regulated basins/r2",
+   "shipped": -0.5579342144494792,
+   "rescored": -0.5326891062633528
+  },
+  {
+   "path": "regulation/log10 dor among regulated basins/cov68",
+   "shipped": 0.2830188679245283,
+   "rescored": 0.24528301886792453
+  },
+  {
+   "path": "regulation/log10 dor among regulated basins/cov95",
+   "shipped": 0.4528301886792453,
+   "rescored": 0.4716981132075472
+  },
+  {
+   "path": "regulation/confusion_p>0.5/fp",
+   "shipped": 92,
+   "rescored": 100
+  },
+  {
+   "path": "regulation/confusion_p>0.5/tn",
+   "shipped": 490,
+   "rescored": 482
+  },
+  {
+   "path": "strata/snow (frac_snow>=0.15)/d_logq/net",
+   "shipped": 0.8422795463453981,
+   "rescored": 0.84504345741562
+  },
+  {
+   "path": "strata/snow (frac_snow>=0.15)/d_rr/net",
+   "shipped": 0.5028860388800522,
+   "rescored": 0.471386782337144
+  },
+  {
+   "path": "strata/snow (frac_snow>=0.15)/d_bfi/net",
+   "shipped": 0.3543241991234009,
+   "rescored": 0.3532448095680822
+  },
+  {
+   "path": "strata/snow (frac_snow>=0.15)/d_logq5/net",
+   "shipped": 0.4060225703629703,
+   "rescored": 0.37629161857844745
+  },
+  {
+   "path": "strata/snow (frac_snow>=0.15)/d_logq95/net",
+   "shipped": 0.7993890370044024,
+   "rescored": 0.8010191355165163
+  },
+  {
+   "path": "strata/snow (frac_snow>=0.15)/d_hfd/net",
+   "shipped": 0.7848346317116915,
+   "rescored": 0.8041178803005838
+  },
+  {
+   "path": "strata/rain (frac_snow<0.15)/d_logq/net",
+   "shipped": 0.7334730051600816,
+   "rescored": 0.7407637692801492
+  },
+  {
+   "path": "strata/rain (frac_snow<0.15)/d_rr/net",
+   "shipped": 0.4337790671161421,
+   "rescored": 0.4307207276732626
+  },
+  {
+   "path": "strata/rain (frac_snow<0.15)/d_bfi/net",
+   "shipped": 0.13388044465803495,
+   "rescored": 0.15110041989244857
+  },
+  {
+   "path": "strata/rain (frac_snow<0.15)/d_logq5/net",
+   "shipped": 0.4711817403044581,
+   "rescored": 0.5044779147025814
+  },
+  {
+   "path": "strata/rain (frac_snow<0.15)/d_logq95/net",
+   "shipped": 0.6627821054224995,
+   "rescored": 0.6840094789772337
+  },
+  {
+   "path": "strata/rain (frac_snow<0.15)/d_hfd/net",
+   "shipped": 0.573341792578913,
+   "rescored": 0.5783409557310183
+  },
+  {
+   "path": "strata/arid (PET/P>1)/d_logq/net",
+   "shipped": 0.6666358507489186,
+   "rescored": 0.6654150506166754
+  },
+  {
+   "path": "strata/arid (PET/P>1)/d_rr/net",
+   "shipped": 0.4330209905378806,
+   "rescored": 0.4187460778581509
+  },
+  {
+   "path": "strata/arid (PET/P>1)/d_bfi/net",
+   "shipped": 0.2111329135429836,
+   "rescored": 0.250463004062191
+  },
+  {
+   "path": "strata/arid (PET/P>1)/d_logq5/net",
+   "shipped": 0.38433389331606765,
+   "rescored": 0.38947323208379736
+  },
+  {
+   "path": "strata/arid (PET/P>1)/d_logq95/net",
+   "shipped": 0.6591604397084527,
+   "rescored": 0.6554306932663138
+  },
+  {
+   "path": "strata/arid (PET/P>1)/d_hfd/net",
+   "shipped": 0.7407308769144864,
+   "rescored": 0.7476638546602696
+  },
+  {
+   "path": "strata/humid (PET/P<=1)/d_logq/net",
+   "shipped": 0.7145613740355974,
+   "rescored": 0.7352799319340801
+  },
+  {
+   "path": "strata/humid (PET/P<=1)/d_rr/net",
+   "shipped": 0.4640515118835365,
+   "rescored": 0.4386055518523938
+  },
+  {
+   "path": "strata/humid (PET/P<=1)/d_bfi/net",
+   "shipped": 0.23308838272989862,
+   "rescored": 0.22302896956362303
+  },
+  {
+   "path": "strata/humid (PET/P<=1)/d_logq5/net",
+   "shipped": 0.4978198973520221,
+   "rescored": 0.5085079981484166
+  },
+  {
+   "path": "strata/humid (PET/P<=1)/d_logq95/net",
+   "shipped": 0.6060774331478004,
+   "rescored": 0.6301544986888282
+  },
+  {
+   "path": "strata/humid (PET/P<=1)/d_hfd/net",
+   "shipped": 0.6120486467710321,
+   "rescored": 0.6224669161670338
+  },
+  {
+   "path": "strata/regulated (dor>0.1)/d_logq/net",
+   "shipped": 0.6804172593646277,
+   "rescored": 0.6548127074442863
+  },
+  {
+   "path": "strata/regulated (dor>0.1)/d_rr/net",
+   "shipped": 0.37102892366050255,
+   "rescored": 0.4120436225699384
+  },
+  {
+   "path": "strata/regulated (dor>0.1)/d_bfi/net",
+   "shipped": 0.20578473210052156,
+   "rescored": 0.26434329065908013
+  },
+  {
+   "path": "strata/regulated (dor>0.1)/d_logq5/net",
+   "shipped": 0.3240715899274261,
+   "rescored": 0.3225152801124809
+  },
+  {
+   "path": "strata/regulated (dor>0.1)/d_logq95/net",
+   "shipped": 0.5789473684210525,
+   "rescored": 0.6465149359886202
+  },
+  {
+   "path": "strata/regulated (dor>0.1)/d_hfd/net",
+   "shipped": 0.7053105737316263,
+   "rescored": 0.7316263632053105
+  },
+  {
+   "path": "strata/runoff ratio > 1 in cal/d_logq/net",
+   "shipped": 0.21562272101126329,
+   "rescored": 0.1874240337087756
+  },
+  {
+   "path": "strata/runoff ratio > 1 in cal/d_rr/net",
+   "shipped": 0.1078518758609513,
+   "rescored": -0.023417875374767038
+  },
+  {
+   "path": "strata/runoff ratio > 1 in cal/d_bfi/net",
+   "shipped": 0.24025605704562028,
+   "rescored": 0.2352321529859817
+  },
+  {
+   "path": "strata/runoff ratio > 1 in cal/d_logq5/net",
+   "shipped": -0.06025466258388795,
+   "rescored": -0.06366071349710908
+  },
+  {
+   "path": "strata/runoff ratio > 1 in cal/d_logq95/net",
+   "shipped": 0.2352321529859817,
+   "rescored": 0.26618588445020663
+  },
+  {
+   "path": "strata/runoff ratio > 1 in cal/d_hfd/net",
+   "shipped": 0.9016287172838505,
+   "rescored": 0.8983874888582773
+  },
+  {
+   "path": "params_plausibility/log_pmult vs calibration runoff ratio (rho)",
+   "shipped": 0.6468234986974234,
+   "rescored": 0.6436661983225624
+  },
+  {
+   "path": "params_plausibility/median predicted P multiplier, cal RR>1 basins",
+   "shipped": 1.158520545488335,
+   "rescored": 1.1693341786172542
+  },
+  {
+   "path": "params_plausibility/median predicted P multiplier, all",
+   "shipped": 1.038209662264311,
+   "rescored": 1.0362386455529384
+  },
+  {
+   "path": "params_plausibility/log_kslow vs observed recession K (rho)",
+   "shipped": 0.2756024604559729,
+   "rescored": 0.27154341751613287
+  },
+  {
+   "path": "params_plausibility/gw_share vs observed BFI (rho)",
+   "shipped": 0.8022098522262199,
+   "rescored": 0.7881328653602616
+  }
+ ],
+ "sklearn_shim": false,
+ "peaks_source": "nwis"
+}

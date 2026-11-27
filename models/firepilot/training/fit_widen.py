@@ -27,5 +27,6 @@ out = dict(rung=rung, n=len(ev), bias=float(np.mean(y - m)), cov90_raw=float(np.
            cov50_raw=float(np.mean(z <= 0.674)), k90=k90, widen=widen,
            cov90_widened=float(np.mean(z <= 1.645 * widen)), cov50_widened=float(np.mean(z <= 0.674 * widen)))
 SUF = '' if VERSION == 'p1' else '_' + VERSION        # p1 keeps the shipped name; exam.py reads the same file
+SUF += '_' + os.environ['FIREPILOT_EXAM_TAG'] if os.environ.get('FIREPILOT_EXAM_TAG') else ''   # 27 Nov 2026, as exam.py
 json.dump(dict(out, physics=VERSION), open(os.path.join(ROOT, 'results', f'sigma_widen{SUF}.json'), 'w'), indent=1)
 print(out)

@@ -45,7 +45,7 @@ The losses are published too.
 | [**StormNet**](models/stormnet/) | How low will Dst fall in the next three hours? | 76,507 hourly forecasts · 137 storm blocks, two exams | 0 wins · 3 losses · 6 ties |
 | [**FlowCast**](models/flowcast/) | Daily flow of a river with no gauge | 619 real CAMELS-US rivers, WY1990-99 and 2016-23 | 0 wins · 12 losses · 1 tie |
 | [**SnowSense**](models/snowsense/) | Daily snow at a mountain station, from its gauge and thermometer | 621 SNOTEL stations · WY2011-2025 · daily SWE | 0 wins · 10 losses · 3 ties |
-| [**BasinDetective**](models/basindetective/) | A river's flow in an unseen decade, from its own record | 619 real CAMELS-US basins, 1989-99 from 1999-2008 | 4 wins · 1 loss · 17 ties |
+| [**BasinDetective**](models/basindetective/) | A river's flow in an unseen decade, from its own record | 619 real CAMELS-US basins, 1989-99 from 1999-2008 | 4 wins · 2 losses · 16 ties |
 | [**ReservoirPilot**](models/reservoirpilot/) | Today's release from one dam, from what its operator knows | 244 real ResOpsUS dams + 15 CDEC reservoirs, once | 2 wins · 2 losses · 1 mixed · 1 tie |
 | [**FireCast**](models/firecast/) | Tomorrow's burned area of a wildfire | 3,030 real US wildfires, 25,105 fire-days, 2012-24 | 7 wins · 1 loss |
 | [**FireSize**](models/firesize/) | Will a new fire escape, and how big will it get? | 655,869 real FPA-FOD ignitions, 2012-2020 | 1 win · 6 losses |
@@ -62,7 +62,7 @@ Every model also runs **live in your browser** on the website — the real netwo
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **610** rung decisions are logged, **355** of them rejections.
+**0** real labelled examples were used for training. **618** rung decisions are logged, **359** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three

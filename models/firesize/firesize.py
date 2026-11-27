@@ -1,4 +1,4 @@
-"""FireSize v1.0 inference (numpy only).
+"""FireSize v1.0.1 inference (numpy only). v1.0.1 (27 Nov 2026) clips standardised inputs at 8 sd by default.
 
 FireSize predicts, from an ignition record plus landscape and weather summaries, the probability that a US wildfire
 escapes to >= 100 acres and the distribution of its final size over 12 FPA-FOD size classes. It was trained only on
@@ -48,14 +48,16 @@ class FireSize:
             return np.column_stack([np.atleast_1d(np.asarray(X[f], float)) for f in self.features])
         return np.atleast_2d(np.asarray(X, float))
 
-    z_clip = None   # e.g. 8.0 to clip standardised inputs (not the released behaviour, so off by default)
+    z_clip = 8.0    # v1.0.1 (27 Nov 2026): clip standardised inputs at +-8 sd; None restores v1.0 (exam re-score in NOTEBOOK)
 
     def probs(self, X, temp=None):
         """n x 12 class probabilities (ensemble mean of 3 MLPs; temp = widen-only temperature fitted on dev).
 
         Audit, 25 Nov 2026: no simulated ignition landed on slash-blowdown fuel (LANDFIRE 201-204), so pt_SB has sd 1e-6
         and a real one enters at z = 1e6: escape probability exactly 0 and a 1.7263-acre median whatever the weather.
-        91 of the 655,869 exam ignitions were scored that way. A warning names such rows; set z_clip to clip."""
+        91 of the 655,869 exam ignitions were scored that way. A warning names such rows. Since v1.0.1 z_clip = 8 clips
+        them (dated exam re-score, 27 Nov 2026: on those 91 the size MAE fell from 1.237 to 0.750 log10; pooled escape
+        AUC 0.7266 -> 0.7264). Set z_clip = None for v1.0's outputs."""
         W = self.W
         Z = self.matrix(X)
         Z = np.where(np.isfinite(Z), Z, W['fill'][None, :])
