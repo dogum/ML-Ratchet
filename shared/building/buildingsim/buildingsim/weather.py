@@ -219,11 +219,14 @@ def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=No
         # Every column is hashed. Until 27 Nov 2026 only T_out was, so two frames that differed in wind, humidity or
         # irradiance shared a cache entry (audit: a warm 2 m/s cache hid an 8 m/s run in FaultFinder and ThermoPilot).
         h = hashlib.md5()
-        for c in sorted(map(str, weather.columns)):
+        for c in sorted(weather.columns, key=str):
             col = weather[c]
-            h.update(c.encode())
-            h.update(np.ascontiguousarray(col.values, dtype=float).tobytes() if np.issubdtype(col.dtype, np.number)
-                     else str(col.tolist()).encode())
+            h.update(str(c).encode())
+            # pandas-aware: nullable Float64 / Int64 / boolean columns are numeric too (Codex, PR #24)
+            if pd.api.types.is_numeric_dtype(col.dtype) or pd.api.types.is_bool_dtype(col.dtype):
+                h.update(np.ascontiguousarray(col.to_numpy(dtype=float, na_value=np.nan)).tobytes())
+            else:
+                h.update(str(col.tolist()).encode())
         h.update(str((len(weather), weather.index[0], weather.index[-1], tuple(sorted(meta.items())), start, end,
                       dt, orientation, None if pv is None else tuple(map(tuple, pv)), albedo)).encode())
         if holidays is not None:

@@ -86,3 +86,14 @@ def test_faultfinder_refuses_self_reference_and_empty_days(flexlab):
             empty[c] = np.nan
     with pytest.raises(ValueError):
         model.read_day(empty)
+
+
+def test_buildingsim_weather_cache_accepts_nullable_dtypes():
+    sys.path.insert(0, str(ROOT / "shared/building/buildingsim"))
+    from buildingsim import weather as W
+    idx = pd.date_range("2021-01-01", periods=48, freq="h", tz="UTC")
+    w = pd.DataFrame(dict(T_out=np.linspace(-5, 5, 48), RH=60.0, GHI=0.0, DNI=0.0, DHI=0.0, wind_speed=3.0,
+                          wind_dir=180.0, pressure=101325.0), index=idx)
+    w["RH"] = w["RH"].astype("Float64")
+    w["wind_dir"] = w["wind_dir"].astype("Int64")
+    W.prepare(w, dict(lat=40.0, lon=-75.0, tz="America/New_York", elev=10.0))
