@@ -225,7 +225,9 @@ def _models(root: Path, audit: dict) -> list[dict]:
 
 def _history(root: Path) -> dict:
     """The collection after each commit that changed a model.yaml or ratchet.yaml, commits per day, and HEAD."""
-    log = _git(root, "log", "--reverse", "--format=@@%H|%aI|%s", "--name-only", "--", "models")
+    # main's own line of commits (first parent; a merge is diffed against it), so every point is main's state at
+    # that moment and the points are in order. `git log --reverse` alone interleaves side branches out of date order.
+    log = _git(root, "log", "--first-parent", "-m", "--reverse", "--format=@@%H|%cI|%s", "--name-only", "--", "models")
     commits, cur = [], None
     for line in log.splitlines():
         if line.startswith("@@"):

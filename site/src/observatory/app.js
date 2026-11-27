@@ -57,7 +57,7 @@ const SROWS = ROWS.filter(r => r.margin !== null);
 const COVS = MODELS.flatMap(m => m.exam.coverage.map((c, i) => ({ m, i, key: m.id + '#c' + i, output: c.output, actual: +c.actual })));
 const DOMAINS = [...d3.rollup(MODELS, v => v.length, m => m.domain)].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(d => d[0]);
 const PLATS = ['vehicle', 'grid', 'building', 'water', 'fire', 'standalone'].filter(p => MODELS.some(m => m.platform === p));
-const SER = D.series.map(s => ({ ...s, d: new Date(s.t), kept: s.rungs - s.rej }));
+const SER = D.series.map(s => ({ ...s, d: new Date(s.t), kept: s.rungs - s.rej })).sort((a, b) => a.d - b.d); // charts and the bisector need time order
 
 /* ============================================================ state and filters */
 const blankF = () => ({ domain: new Set(), platform: new Set(), verdict: new Set(), audit: new Set(), status: new Set(), model: new Set(), dumb: null, classical: null });
