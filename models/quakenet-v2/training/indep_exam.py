@@ -97,6 +97,8 @@ def run(keys, SP, order):
     for k, R in RC.items():
         e = SP['events'][k]; st = {'independent': [], 'associated': [], 'catalogue': []}
         A = [dict(lat=meta['lat'], lon=meta['lon'], t_start=meta['t_start'], trig=triggers(x[0])) for s, x, meta in R]; pa, ainfo = associate(A)
+        if pa is None:   # no record of the event has a trigger: fall back to the per-record pick (never happened on dev or exam)
+            pa = [pick_indep(x[0])[0] for s, x, meta in R]; no_assoc['all'] = no_assoc.get('all', 0) + 1
         for (s, x, meta), p in zip(R, pa):
             st['associated'].append(dict(zne=x, lat=meta['lat'], lon=meta['lon'], t_start=meta['t_start'], p_guess=p))
             apicks.append(float(meta['t_start'] + p - meta['grading_p_time']))
