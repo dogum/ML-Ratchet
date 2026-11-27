@@ -59,6 +59,7 @@ def associate(st, win=6.0, depth=33.0):
             g = int(np.lexsort((w, n))[-1])
             if (n[g], w[g]) > best[:2]: best = (n[g], w[g], g, o[g])
     n, w, g, o = best; out = []
+    if g is None: return None, dict(n_assoc=0)     # no station has a trigger: no source to associate
     for j, r in enumerate(st):
         pred = o + TT[j, g] - r['t_start']; tr = [a for a, _ in r['trig'] if abs(a - pred) <= win]
         out.append(int(min(tr, key=lambda a: abs(a - pred))) if tr else int(round(pred)))
@@ -92,7 +93,7 @@ def summ(L):
                 cov_z=float(np.mean(a['z_ratio'] < 1)), cov_mw=float(np.mean(a['mw_ratio'] < 1)), cov_t0=float(np.mean(a['t0_ratio'] < 1)))
 
 def run(keys, SP, order):
-    net = QN.QuakeNet2(); RC = records(keys, SP, order); res = {m: {t: [] for t in ('3', '5', 'all')} for m in ('independent', 'associated', 'catalogue')}; picks = []; apicks = []; per = []
+    net = QN.QuakeNet2(); RC = records(keys, SP, order); res = {m: {t: [] for t in ('3', '5', 'all')} for m in ('independent', 'associated', 'catalogue')}; picks = []; apicks = []; per = []; no_assoc = {}
     for k, R in RC.items():
         e = SP['events'][k]; st = {'independent': [], 'associated': [], 'catalogue': []}
         A = [dict(lat=meta['lat'], lon=meta['lon'], t_start=meta['t_start'], trig=triggers(x[0])) for s, x, meta in R]; pa, ainfo = associate(A)
@@ -107,7 +108,13 @@ def run(keys, SP, order):
         for mode in st:
             for tag, N in (('3', 3), ('5', 5), ('all', len(R))):
                 if N > len(R): continue
-                P = net.locate(st[mode][:N]); E = errs(P, e); res[mode][tag].append(E)
+                if mode == 'associated' and N < len(R):     # associate on the subset alone (fix 27 Nov 2026, PR review):
+                    ps, _ = associate(A[:N])                 # the excluded stations must not inform the picks
+                    if ps is None: ps = [d['p_guess'] for d in st['independent'][:N]]; no_assoc[tag] = no_assoc.get(tag, 0) + 1   # fall back to the per-record pick
+                    sub = [dict(d, p_guess=p) for d, p in zip(st[mode][:N], ps)]
+                else:
+                    sub = st[mode][:N]
+                P = net.locate(sub); E = errs(P, e); res[mode][tag].append(E)
                 if tag == 'all': row[mode] = dict(lat=P['lat'], lon=P['lon'], depth=P['depth'], mw=P['mw'], epi_km=E['epi_km'])
         per.append(row)
     pe = np.abs([p['err_s'] for p in picks])
@@ -115,14 +122,18 @@ def run(keys, SP, order):
                within_60s=float(np.mean(pe <= 60)), over_300s=float(np.mean(pe > 300))),
                picks_associated=dict(median_abs_err_s=float(np.median(np.abs(apicks))), within_10s=float(np.mean(np.abs(apicks) <= 10)), within_30s=float(np.mean(np.abs(apicks) <= 30)),
                within_60s=float(np.mean(np.abs(apicks) <= 60)), over_300s=float(np.mean(np.abs(apicks) > 300))),
+               subsets_without_association=no_assoc,
                results={m: {t: summ(v) for t, v in d.items()} for m, d in res.items()}, per_event=per, per_pick=picks)
     return out
 
 if __name__ == '__main__':
     which = sys.argv[1]; SP = json.load(open(H + 'splits.json')); order = json.load(open(H + 'data/station_order.json'))
-    fn = H + ('indep_exam.json' if which == 'exam' else 'indep_exam_dev.json')
-    if which == 'exam' and os.path.exists(fn): sys.exit('The independent-pick exam has already been run (indep_exam.json exists). It runs once.')
-    t = time.time(); keys = SP['exam_multi'] if which == 'exam' else SP['dev']
+    # 'exam_fix' (27 Nov 2026): the first run associated over all of an event's stations before the 3- and 5-station
+    # subsets were scored, so those two associated rows saw stations they should not. The fixed code is run once more on
+    # the same records (nothing else changed) and written beside the original record.
+    fn = H + {'exam': 'indep_exam.json', 'exam_fix': 'indep_exam_fix.json'}.get(which, 'indep_exam_dev.json')
+    if which.startswith('exam') and os.path.exists(fn): sys.exit(f'{os.path.basename(fn)} exists. It runs once.')
+    t = time.time(); keys = SP['exam_multi'] if which.startswith('exam') else SP['dev']
     out = run(keys, SP, order); out.update(split=which, run_utc=time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime()), seconds=round(time.time() - t))
     json.dump(out, open(fn, 'w'), indent=1)
     print(json.dumps(dict(n_events=out['n_events'], n_records=out['n_records'], picks=out['picks'], picks_associated=out['picks_associated']))); [print(m, t, {a: round(b, 3) for a, b in v.items()}) for m, d in out['results'].items() for t, v in d.items() if v]

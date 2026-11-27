@@ -142,11 +142,16 @@ Two pickers, both fixed on the 40 dev quakes before the exam (`training/indep_ex
 | all | associated | 497 | 1,346 | 26.6 | 0.122 | 40.4 | 26% |
 | all | per record | 1,284 | 1,603 | 47.0 | 0.159 | 475 | 4% |
 | 5 | catalogue | 191 | 324 | 17.0 | 0.098 | 7.2 | 67% |
-| 5 | associated | 548 | 1,597 | 28.8 | 0.131 | 35.8 | 33% |
+| 5 | associated | 1,251 | 2,211 | 35.0 | 0.142 | 130 | 21% |
 | 3 | catalogue | 279 | 583 | 21.2 | 0.102 | 9.7 | 64% |
-| 3 | associated | 694 | 1,927 | 29.6 | 0.131 | 41.4 | 35% |
+| 3 | associated | 1,865 | 2,841 | 34.6 | 0.154 | 207 | 17% |
 
 - The control reproduces the published exam (123 vs 127 km with all stations) from freshly fetched records.
+- Correction (27 Nov 2026, PR review): the first run associated over all of an event's stations before scoring the 3-
+  and 5-station subsets, so those two rows saw stations they should not (they read 694 and 548 km). The fixed code
+  (association on the subset alone; 10 three-station and 1 five-station subsets had no trigger and fell back to the
+  per-record pick) was run once more on the same records (`training/results/indep_exam_fix.json`); every other row
+  reproduced exactly. The table shows the corrected rows.
 - Picks against the catalogue P (grading only): associated 40% within 10 s, 51% within 30 s, 30% off by more than
   5 minutes; per record 28% within 10 s. At 1 sample/s and 0.05–0.3 Hz the P of an M 5.5–6 quake is often not the
   strongest trigger in two hours of record.

@@ -131,7 +131,7 @@ Audit queue: the exam's location rests on catalogue-assisted P guesses.
 | P guess | 3 stations | 5 | all (≤10) | all: depth | all: Mw | all: t0 | picks within 10 s |
 |---|---|---|---|---|---|---|---|
 | catalogue (control) | 279 km | 191 | 123 | 17.6 km | 0.096 | 4.5 s | — |
-| associated | 694 | 548 | 497 | 26.6 | 0.122 | 40.4 | 40% |
+| associated | 694 → 1,865 (corrected) | 548 → 1,251 (corrected) | 497 | 26.6 | 0.122 | 40.4 | 40% |
 | per record | 2,287 | 1,764 | 1,284 | 47.0 | 0.159 | 475 | 28% |
 
 - The control reproduces the published 127 km (123 km) from freshly fetched records.
@@ -139,3 +139,12 @@ Audit queue: the exam's location rests on catalogue-assisted P guesses.
   (497 vs 123 km median, all stations), and ellipse coverage falls to 26%. Recorded in the card and in model.yaml
   losses and limits. Records: `training/results/indep_exam.json`, `indep_exam_dev.json` (per event; per-pick lists in
   `work/`).
+
+**Correction, same day (PR review).** `indep_exam.py` associated over all of an event's stations and then scored the
+3- and 5-station subsets with those picks, so the subset rows used stations they should not have. Fixed: association on
+each subset alone (where a subset has no trigger at all, 10 three-station and 1 five-station cases, the per-record pick is
+used). Run once more on the same records as `indep_exam.py exam_fix` (21:32 UTC; record
+`training/results/indep_exam_fix.json`). Every row that does not depend on the bug (catalogue, per record, associated
+with all stations, pick statistics) reproduced to the last digit. Corrected associated rows: 3 stations 1,865 km median
+(mean 2,841; coverage 17%), 5 stations 1,251 km (mean 2,211; coverage 21%). With few stations the associator does barely
+better than the per-record trigger (2,287 and 1,764 km). The original record `indep_exam.json` is kept as run.
