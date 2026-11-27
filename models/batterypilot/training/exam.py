@@ -34,9 +34,11 @@ def exam_sets():
     return s
 
 
-def main(rung, strats=STRATS):
+def main(rung, strats=STRATS, out=None, weights=None):
+    """out: name of the output files (default the rung); weights: the .npz to load (default WORK/ckpt/<rung>.npz)."""
     os.makedirs(f'{ROOT}/data/exam', exist_ok=True)
-    net = PolicyNet(f'{ROOT}/ckpt/{rung}.npz')
+    net = PolicyNet(weights or f'{ROOT}/ckpt/{rung}.npz')
+    rung = out or rung
     rows, daily, monthly = [], [], []
     t0 = time.time()
     for m, n, y in exam_sets():

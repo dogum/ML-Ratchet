@@ -24,7 +24,7 @@ predict_v10 = RR.predict
 def predict_v11(W, B):
     out = predict_v10(W, B)
     X = np.nan_to_num(B['xs'].astype(np.float32)).astype(np.float64)
-    ref = DC.DemandCast().offset_ref(B['meta_ba'], len(X))     # each grid's dev reference (demandcast_meta.json)
+    ref = DC.DemandCast(DC.WEIGHTS_V1_1, DC.META_V1_1).offset_ref(B['meta_ba'], len(X))     # each grid's dev reference
     r, _ = DC.solar_offset(X, ref)
     Xa = DC.align_solar_x(X, r)
     mu, sig = DC._forward(W['s'], Xa, 's', B['ps'].astype(np.float32))
@@ -42,7 +42,7 @@ def both(data):
         RR.shim.predict = fn
         exam.main(name)
     B = dict(np.load(f'{data}/banks/real_exam.npz'))
-    r, _ = DC.solar_offset(np.nan_to_num(B['xs'].astype(np.float64)), DC.DemandCast().offset_ref(B['meta_ba'], len(B['xs'])))
+    r, _ = DC.solar_offset(np.nan_to_num(B['xs'].astype(np.float64)), DC.DemandCast(DC.WEIGHTS_V1_1, DC.META_V1_1).offset_ref(B['meta_ba'], len(B['xs'])))
     yr = np.array([d[:4] for d in B['meta_day']])
     off = {ba: {y: [int(((B['meta_ba'] == ba) & (yr == y) & B['hass'] & (B['meta_fc'] == 0) & (r == k)).sum())
                     for k in (-1, 0, 1)] for y in sorted(set(yr))} for ba in sorted(set(B['meta_ba']))}
