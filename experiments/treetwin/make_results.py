@@ -14,15 +14,15 @@ def build_results() -> dict:
         fp = P.HERE / "scores" / f"{p}.json"
         if not fp.exists():
             raise FileNotFoundError(f"missing exam score file: {fp}")
-        scores[p] = json.loads(fp.read_text())
+        scores[p] = json.loads(fp.read_text(encoding="utf-8"))
 
     summary = {
         "experiment": "TreeTwin + ConformalRatchet (M2)",
         "date": "2026-11-24",
-        "prereg_log": json.loads((P.HERE / "prereg_log.json").read_text()),
+        "prereg_log": json.loads((P.HERE / "prereg_log.json").read_text(encoding="utf-8")),
         "platforms": scores,
     }
-    (P.HERE / "results.json").write_text(json.dumps(summary, indent=2) + "\n")
+    (P.HERE / "results.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     lines = [
         "# TreeTwin + ConformalRatchet — Results",
@@ -76,9 +76,20 @@ def build_results() -> dict:
         "## 3. Exact TreeSHAP Twin-Test Gap Rankings (Real Dev vs Simulator)",
         "",
     ]
+    rebuild = P.HERE / "dev_rebuild_2026-11-27.json"
+    rb = json.loads(rebuild.read_text(encoding="utf-8"))["platforms"] if rebuild.exists() else None
+    if rb:
+        lines += [
+            "Rebuilt 27 Nov 2026 (`dev_rebuild_2026-11-27.json`, dev only) after the PR #19 review: the first version",
+            "grouped EnergyNet features by the wrong indices, filed AirfoilNet's tmax under trailing-edge thickness, and",
+            "ran BuildingSim with constant 3 m/s wind. The tables below come from forests rebuilt on Windows with the same",
+            "scripts and seeds (close to, not identical with, the forests the exam scored). The score files keep the",
+            "original tables as they were run.",
+            "",
+        ]
     for p in PLATFORMS:
         s = scores[p]
-        ts = s["treeshap_twin_dev"]
+        ts = rb[p]["treeshap_twin_dev"] if rb else s["treeshap_twin_dev"]
         lines.append(f"### {s['title']} (`{ts['mode']}`, units: {ts['unit']})")
         lines.append("")
         lines.append("| Rank | Physical feature group | Mean twin | Mean real | Mean real − twin | Mean |real − twin| | Gap share |")
@@ -106,7 +117,7 @@ def build_results() -> dict:
         )
 
     lines.append("")
-    (P.HERE / "RESULTS.md").write_text("\n".join(lines))
+    (P.HERE / "RESULTS.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     print(f"Wrote {P.HERE / 'results.json'} and {P.HERE / 'RESULTS.md'}")
     return summary
 

@@ -25,37 +25,43 @@ Fitted strictly on real Dev residuals (widen-only `>= 1.0`), graded once across 
 
 ## 3. Exact TreeSHAP Twin-Test Gap Rankings (Real Dev vs Simulator)
 
+Rebuilt 27 Nov 2026 (`dev_rebuild_2026-11-27.json`, dev only) after the PR #19 review: the first version
+grouped EnergyNet features by the wrong indices, filed AirfoilNet's tmax under trailing-edge thickness, and
+ran BuildingSim with constant 3 m/s wind. The tables below come from forests rebuilt on Windows with the same
+scripts and seeds (close to, not identical with, the forests the exam scored). The score files keep the
+original tables as they were run.
+
 ### BuildingDetective (RECS 2020) (`input_shift_paired_twins`, units: % floor-area shift)
 
 | Rank | Physical feature group | Mean twin | Mean real | Mean real − twin | Mean |real − twin| | Gap share |
 |---:|---|---:|---:|---:|---:|---:|
-| 1 | Electricity (kWh/yr) | -2.57 | -49.10 | -46.53 | 52.16 | 64.6% |
-| 2 | Fuel gas/oil (kWh/yr) | +9.36 | +8.63 | -0.73 | 16.33 | 20.2% |
-| 3 | Heating degree days | -12.11 | -6.83 | +5.27 | 9.74 | 12.1% |
-| 4 | Cooling degree days | +0.28 | -0.12 | -0.40 | 2.50 | 3.1% |
+| 1 | Electricity (kWh/yr) | -2.17 | -48.79 | -46.62 | 51.96 | 64.2% |
+| 2 | Fuel gas/oil (kWh/yr) | +10.07 | +8.09 | -1.97 | 16.52 | 20.4% |
+| 3 | Heating degree days | -12.35 | -6.98 | +5.37 | 10.08 | 12.4% |
+| 4 | Cooling degree days | -0.27 | -0.49 | -0.22 | 2.39 | 2.9% |
 | 5 | District meters | +0.00 | +0.00 | +0.00 | 0.00 | 0.0% |
 
 ### AirfoilNet (UIUC LSAT drag) (`forward_residual_gap`, units: % drag shift)
 
 | Rank | Physical feature group | Mean twin | Mean real | Mean real − twin | Mean |real − twin| | Gap share |
 |---:|---|---:|---:|---:|---:|---:|
-| 1 | Angle of attack (alpha) | +13.24 | +13.19 | -0.05 | 10.98 | 38.3% |
-| 2 | Mid-chord thickness (25-75% c) | -1.61 | -1.58 | +0.03 | 8.68 | 30.2% |
-| 3 | Mid/aft camber | +5.27 | +5.42 | +0.15 | 4.66 | 16.2% |
-| 4 | Reynolds number (log10 Re) | -9.68 | -9.75 | -0.07 | 2.92 | 10.2% |
-| 5 | Leading-edge thickness (0-25% c) | -0.21 | -0.13 | +0.08 | 0.72 | 2.5% |
-| 6 | Trailing-edge thickness (75-100% c) | +1.32 | +1.33 | +0.01 | 0.44 | 1.5% |
+| 1 | Angle of attack (alpha) | +12.45 | +12.40 | -0.06 | 11.29 | 41.4% |
+| 2 | Mid-chord thickness (25-75% c) | -1.98 | -2.03 | -0.05 | 9.28 | 34.0% |
+| 3 | Mid/aft camber | +4.75 | +4.87 | +0.12 | 2.40 | 8.8% |
+| 4 | Reynolds number (log10 Re) | -10.91 | -10.95 | -0.04 | 2.33 | 8.5% |
+| 5 | Leading-edge thickness (0-25% c) | +0.84 | +0.93 | +0.09 | 1.41 | 5.2% |
+| 6 | Trailing-edge thickness (75-100% c) | +1.59 | +1.60 | +0.01 | 0.58 | 2.1% |
 
 ### EnergyNet (VED real trips) (`forward_residual_gap`, units: % energy correction)
 
 | Rank | Physical feature group | Mean twin | Mean real | Mean real − twin | Mean |real − twin| | Gap share |
 |---:|---|---:|---:|---:|---:|---:|
-| 1 | Model year | +9.09 | +9.09 | +0.00 | 3.94 | 28.2% |
-| 2 | Ambient temperature | -2.93 | -2.81 | +0.13 | 3.04 | 21.8% |
-| 3 | Accessory load | +0.88 | +0.79 | -0.09 | 2.34 | 16.7% |
-| 4 | Stop density | -3.54 | -3.53 | +0.01 | 1.95 | 14.0% |
-| 5 | Rolling work | -0.84 | -0.91 | -0.07 | 0.93 | 6.7% |
-| 6 | Mass | +7.47 | +7.47 | -0.01 | 0.67 | 4.8% |
+| 1 | Powertrain, labels & year | +8.04 | +8.01 | -0.04 | 3.89 | 28.9% |
+| 2 | Ambient temperature | -2.85 | -2.79 | +0.06 | 3.32 | 24.7% |
+| 3 | Duration & idle | +0.11 | -0.01 | -0.11 | 2.20 | 16.4% |
+| 4 | Speed & stops | -3.13 | -3.08 | +0.06 | 1.55 | 11.5% |
+| 5 | Rolling work | +0.19 | +0.18 | -0.01 | 0.92 | 6.8% |
+| 6 | Grade work | +0.51 | +0.53 | +0.02 | 0.68 | 5.0% |
 
 ## 4. Cross-Family Disagreement as a Label-Free Gap Detector (`|GBDT-Mono − Incumbent|`)
 

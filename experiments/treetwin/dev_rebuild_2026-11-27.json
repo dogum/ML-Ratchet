@@ -1,0 +1,1899 @@
+{
+ "date": "2026-11-27",
+ "note": "Dev-only TreeSHAP twin diagnostics rebuilt after the review of PR #19: EnergyNet groups follow features.py's index map, AirfoilNet's tmax has its own group, BuildingDetective's BuildingSim runs use the real wind and elevation. Rebuilt on Windows from the same scripts and seeds; the forests are close to, not identical with, the ones the exam scored (see train_summary). No exam row was read.",
+ "platforms": {
+  "buildingdetective": {
+   "title": "BuildingDetective (RECS 2020)",
+   "treeshap_twin_dev": {
+    "mode": "input_shift_paired_twins",
+    "unit": "% floor-area shift",
+    "n_pairs": 300,
+    "ranked": [
+     {
+      "feature": "Electricity (kWh/yr)",
+      "mean_real": -48.786364,
+      "mean_twin": -2.170328,
+      "mean_diff": -46.616036,
+      "mean_abs_real": 50.580029,
+      "mean_abs_twin": 32.27075,
+      "mean_abs_diff": 51.956541,
+      "share_of_gap": 0.6419
+     },
+     {
+      "feature": "Fuel gas/oil (kWh/yr)",
+      "mean_real": 8.093141,
+      "mean_twin": 10.065458,
+      "mean_diff": -1.972317,
+      "mean_abs_real": 17.708165,
+      "mean_abs_twin": 15.948112,
+      "mean_abs_diff": 16.520379,
+      "share_of_gap": 0.2041
+     },
+     {
+      "feature": "Heating degree days",
+      "mean_real": -6.976926,
+      "mean_twin": -12.351338,
+      "mean_diff": 5.374411,
+      "mean_abs_real": 15.76899,
+      "mean_abs_twin": 18.192129,
+      "mean_abs_diff": 10.080944,
+      "share_of_gap": 0.1245
+     },
+     {
+      "feature": "Cooling degree days",
+      "mean_real": -0.492669,
+      "mean_twin": -0.270083,
+      "mean_diff": -0.222586,
+      "mean_abs_real": 2.249256,
+      "mean_abs_twin": 2.730312,
+      "mean_abs_diff": 2.385201,
+      "share_of_gap": 0.0295
+     },
+     {
+      "feature": "District meters",
+      "mean_real": 0.0,
+      "mean_twin": 0.0,
+      "mean_diff": 0.0,
+      "mean_abs_real": 0.0,
+      "mean_abs_twin": 0.0,
+      "mean_abs_diff": 0.0,
+      "share_of_gap": 0.0
+     }
+    ],
+    "by_stratum": {
+     "cold_elec": [
+      {
+       "feature": "Electricity (kWh/yr)",
+       "mean_real": -62.4864,
+       "mean_twin": -21.572028,
+       "mean_diff": -40.914372,
+       "mean_abs_real": 62.4864,
+       "mean_abs_twin": 42.309497,
+       "mean_abs_diff": 40.914372,
+       "share_of_gap": 0.6602
+      },
+      {
+       "feature": "Heating degree days",
+       "mean_real": -21.346601,
+       "mean_twin": -25.319458,
+       "mean_diff": 3.972857,
+       "mean_abs_real": 21.346601,
+       "mean_abs_twin": 25.445203,
+       "mean_abs_diff": 15.263026,
+       "share_of_gap": 0.2463
+      },
+      {
+       "feature": "Fuel gas/oil (kWh/yr)",
+       "mean_real": -4.152457,
+       "mean_twin": 0.71731,
+       "mean_diff": -4.869768,
+       "mean_abs_real": 4.152457,
+       "mean_abs_twin": 4.81147,
+       "mean_abs_diff": 4.879856,
+       "share_of_gap": 0.0787
+      },
+      {
+       "feature": "Cooling degree days",
+       "mean_real": 0.011139,
+       "mean_twin": 0.302874,
+       "mean_diff": -0.291735,
+       "mean_abs_real": 1.412527,
+       "mean_abs_twin": 1.159532,
+       "mean_abs_diff": 0.914601,
+       "share_of_gap": 0.0148
+      },
+      {
+       "feature": "District meters",
+       "mean_real": 0.0,
+       "mean_twin": 0.0,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.0,
+       "mean_abs_twin": 0.0,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "cold_fuel": [
+      {
+       "feature": "Electricity (kWh/yr)",
+       "mean_real": -56.82586,
+       "mean_twin": 13.283888,
+       "mean_diff": -70.109748,
+       "mean_abs_real": 56.82586,
+       "mean_abs_twin": 31.087108,
+       "mean_abs_diff": 70.370937,
+       "share_of_gap": 0.7315
+      },
+      {
+       "feature": "Fuel gas/oil (kWh/yr)",
+       "mean_real": 15.271316,
+       "mean_twin": 21.683005,
+       "mean_diff": -6.411689,
+       "mean_abs_real": 19.080123,
+       "mean_abs_twin": 22.018238,
+       "mean_abs_diff": 14.998794,
+       "share_of_gap": 0.1559
+      },
+      {
+       "feature": "Heating degree days",
+       "mean_real": -27.554707,
+       "mean_twin": -32.937652,
+       "mean_diff": 5.382945,
+       "mean_abs_real": 27.554707,
+       "mean_abs_twin": 32.942418,
+       "mean_abs_diff": 9.802776,
+       "share_of_gap": 0.1019
+      },
+      {
+       "feature": "Cooling degree days",
+       "mean_real": -0.093526,
+       "mean_twin": 0.261194,
+       "mean_diff": -0.35472,
+       "mean_abs_real": 1.177357,
+       "mean_abs_twin": 0.764744,
+       "mean_abs_diff": 1.023122,
+       "share_of_gap": 0.0106
+      },
+      {
+       "feature": "District meters",
+       "mean_real": 0.0,
+       "mean_twin": 0.0,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.0,
+       "mean_abs_twin": 0.0,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "mixed_elec": [
+      {
+       "feature": "Electricity (kWh/yr)",
+       "mean_real": -37.167476,
+       "mean_twin": -25.73613,
+       "mean_diff": -11.431346,
+       "mean_abs_real": 45.73881,
+       "mean_abs_twin": 39.737295,
+       "mean_abs_diff": 35.764427,
+       "share_of_gap": 0.6678
+      },
+      {
+       "feature": "Heating degree days",
+       "mean_real": 3.532416,
+       "mean_twin": -6.523982,
+       "mean_diff": 10.056399,
+       "mean_abs_real": 6.763559,
+       "mean_abs_twin": 8.23264,
+       "mean_abs_diff": 10.443044,
+       "share_of_gap": 0.195
+      },
+      {
+       "feature": "Fuel gas/oil (kWh/yr)",
+       "mean_real": 0.007824,
+       "mean_twin": 2.239846,
+       "mean_diff": -2.232022,
+       "mean_abs_real": 2.745329,
+       "mean_abs_twin": 3.939915,
+       "mean_abs_diff": 4.552039,
+       "share_of_gap": 0.085
+      },
+      {
+       "feature": "Cooling degree days",
+       "mean_real": 0.234846,
+       "mean_twin": 1.118135,
+       "mean_diff": -0.883289,
+       "mean_abs_real": 3.12529,
+       "mean_abs_twin": 2.386925,
+       "mean_abs_diff": 2.793633,
+       "share_of_gap": 0.0522
+      },
+      {
+       "feature": "District meters",
+       "mean_real": 0.0,
+       "mean_twin": 0.0,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.0,
+       "mean_abs_twin": 0.0,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "mixed_fuel": [
+      {
+       "feature": "Electricity (kWh/yr)",
+       "mean_real": -48.329282,
+       "mean_twin": -3.817951,
+       "mean_diff": -44.511331,
+       "mean_abs_real": 49.708576,
+       "mean_abs_twin": 31.766076,
+       "mean_abs_diff": 50.260853,
+       "share_of_gap": 0.6228
+      },
+      {
+       "feature": "Fuel gas/oil (kWh/yr)",
+       "mean_real": 9.426065,
+       "mean_twin": 13.330388,
+       "mean_diff": -3.904323,
+       "mean_abs_real": 24.24494,
+       "mean_abs_twin": 14.895019,
+       "mean_abs_diff": 17.464923,
+       "share_of_gap": 0.2164
+      },
+      {
+       "feature": "Heating degree days",
+       "mean_real": -0.951727,
+       "mean_twin": -6.002794,
+       "mean_diff": 5.051068,
+       "mean_abs_real": 6.390304,
+       "mean_abs_twin": 9.755978,
+       "mean_abs_diff": 10.316403,
+       "share_of_gap": 0.1278
+      },
+      {
+       "feature": "Cooling degree days",
+       "mean_real": 0.220488,
+       "mean_twin": 0.434594,
+       "mean_diff": -0.214106,
+       "mean_abs_real": 2.48826,
+       "mean_abs_twin": 3.156543,
+       "mean_abs_diff": 2.653019,
+       "share_of_gap": 0.0329
+      },
+      {
+       "feature": "District meters",
+       "mean_real": 0.0,
+       "mean_twin": 0.0,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.0,
+       "mean_abs_twin": 0.0,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "warm_elec": [
+      {
+       "feature": "Electricity (kWh/yr)",
+       "mean_real": -37.774344,
+       "mean_twin": -9.985804,
+       "mean_diff": -27.788539,
+       "mean_abs_real": 40.069031,
+       "mean_abs_twin": 30.531126,
+       "mean_abs_diff": 36.563367,
+       "share_of_gap": 0.5786
+      },
+      {
+       "feature": "Fuel gas/oil (kWh/yr)",
+       "mean_real": -0.407865,
+       "mean_twin": -9.372786,
+       "mean_diff": 8.964921,
+       "mean_abs_real": 1.572278,
+       "mean_abs_twin": 13.951166,
+       "mean_abs_diff": 13.91463,
+       "share_of_gap": 0.2202
+      },
+      {
+       "feature": "Heating degree days",
+       "mean_real": 14.822158,
+       "mean_twin": 6.26254,
+       "mean_diff": 8.559618,
+       "mean_abs_real": 14.822158,
+       "mean_abs_twin": 6.851631,
+       "mean_abs_diff": 9.613288,
+       "share_of_gap": 0.1521
+      },
+      {
+       "feature": "Cooling degree days",
+       "mean_real": -2.137247,
+       "mean_twin": -4.682237,
+       "mean_diff": 2.544991,
+       "mean_abs_real": 2.501307,
+       "mean_abs_twin": 4.885774,
+       "mean_abs_diff": 3.104114,
+       "share_of_gap": 0.0491
+      },
+      {
+       "feature": "District meters",
+       "mean_real": 0.0,
+       "mean_twin": 0.0,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.0,
+       "mean_abs_twin": 0.0,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "warm_fuel": [
+      {
+       "feature": "Electricity (kWh/yr)",
+       "mean_real": -41.322133,
+       "mean_twin": -7.895619,
+       "mean_diff": -33.426514,
+       "mean_abs_real": 43.691915,
+       "mean_abs_twin": 28.722338,
+       "mean_abs_diff": 35.876207,
+       "share_of_gap": 0.4397
+      },
+      {
+       "feature": "Fuel gas/oil (kWh/yr)",
+       "mean_real": 2.849188,
+       "mean_twin": -4.420141,
+       "mean_diff": 7.269329,
+       "mean_abs_real": 25.491989,
+       "mean_abs_twin": 17.038565,
+       "mean_abs_diff": 32.258818,
+       "share_of_gap": 0.3953
+      },
+      {
+       "feature": "Heating degree days",
+       "mean_real": 13.029401,
+       "mean_twin": 11.96736,
+       "mean_diff": 1.062041,
+       "mean_abs_real": 13.031954,
+       "mean_abs_twin": 12.913402,
+       "mean_abs_diff": 8.631051,
+       "share_of_gap": 0.1058
+      },
+      {
+       "feature": "Cooling degree days",
+       "mean_real": -2.680826,
+       "mean_twin": -1.51222,
+       "mean_diff": -1.168606,
+       "mean_abs_real": 3.803465,
+       "mean_abs_twin": 5.971183,
+       "mean_abs_diff": 4.83099,
+       "share_of_gap": 0.0592
+      },
+      {
+       "feature": "District meters",
+       "mean_real": 0.0,
+       "mean_twin": 0.0,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.0,
+       "mean_abs_twin": 0.0,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ]
+    },
+    "twin_report": {
+     "overall": {
+      "n": 300,
+      "phys_bias_mean": 0.0,
+      "phys_bias_median": 0.0,
+      "phys_mae": 0.0,
+      "phys_bias_ci95": [
+       0.0,
+       0.0
+      ],
+      "real_mae": 0.269944,
+      "twin_mae": 0.154498,
+      "mae_gap_real_minus_twin": 0.115447,
+      "mae_gap_ci95": [
+       0.090207,
+       0.13899
+      ],
+      "pred_shift_mean": -0.188642,
+      "pred_shift_mae": 0.240396
+     },
+     "strata": {
+      "cold_elec": {
+       "n": 13,
+       "phys_bias_mean": 0.0,
+       "phys_bias_median": 0.0,
+       "phys_mae": 0.0,
+       "phys_bias_ci95": [
+        0.0,
+        0.0
+       ],
+       "real_mae": 0.16926,
+       "twin_mae": 0.188224,
+       "mae_gap_real_minus_twin": -0.018964,
+       "mae_gap_ci95": [
+        -0.091819,
+        0.060546
+       ],
+       "pred_shift_mean": -0.182851,
+       "pred_shift_mae": 0.187003
+      },
+      "cold_fuel": {
+       "n": 100,
+       "phys_bias_mean": 0.0,
+       "phys_bias_median": 0.0,
+       "phys_mae": 0.0,
+       "phys_bias_ci95": [
+        0.0,
+        0.0
+       ],
+       "real_mae": 0.354337,
+       "twin_mae": 0.147744,
+       "mae_gap_real_minus_twin": 0.206593,
+       "mae_gap_ci95": [
+        0.167712,
+        0.246266
+       ],
+       "pred_shift_mean": -0.310491,
+       "pred_shift_mae": 0.31495
+      },
+      "mixed_elec": {
+       "n": 30,
+       "phys_bias_mean": 0.0,
+       "phys_bias_median": 0.0,
+       "phys_mae": 0.0,
+       "phys_bias_ci95": [
+        0.0,
+        0.0
+       ],
+       "real_mae": 0.167791,
+       "twin_mae": 0.132987,
+       "mae_gap_real_minus_twin": 0.034803,
+       "mae_gap_ci95": [
+        -0.025871,
+        0.097169
+       ],
+       "pred_shift_mean": -0.019501,
+       "pred_shift_mae": 0.177407
+      },
+      "mixed_fuel": {
+       "n": 90,
+       "phys_bias_mean": 0.0,
+       "phys_bias_median": 0.0,
+       "phys_mae": 0.0,
+       "phys_bias_ci95": [
+        0.0,
+        0.0
+       ],
+       "real_mae": 0.263482,
+       "twin_mae": 0.16047,
+       "mae_gap_real_minus_twin": 0.103012,
+       "mae_gap_ci95": [
+        0.059983,
+        0.1494
+       ],
+       "pred_shift_mean": -0.18926,
+       "pred_shift_mae": 0.232085
+      },
+      "warm_elec": {
+       "n": 26,
+       "phys_bias_mean": 0.0,
+       "phys_bias_median": 0.0,
+       "phys_mae": 0.0,
+       "phys_bias_ci95": [
+        0.0,
+        0.0
+       ],
+       "real_mae": 0.173788,
+       "twin_mae": 0.148939,
+       "mae_gap_real_minus_twin": 0.024848,
+       "mae_gap_ci95": [
+        -0.0317,
+        0.089885
+       ],
+       "pred_shift_mean": -0.033523,
+       "pred_shift_mae": 0.158431
+      },
+      "warm_fuel": {
+       "n": 41,
+       "phys_bias_mean": 0.0,
+       "phys_bias_median": 0.0,
+       "phys_mae": 0.0,
+       "phys_bias_ci95": [
+        0.0,
+        0.0
+       ],
+       "real_mae": 0.245942,
+       "twin_mae": 0.166431,
+       "mae_gap_real_minus_twin": 0.079511,
+       "mae_gap_ci95": [
+        0.018165,
+        0.151303
+       ],
+       "pred_shift_mean": -0.114062,
+       "pred_shift_mae": 0.191799
+      }
+     }
+    }
+   },
+   "dev_metrics": {
+    "incumbent": {
+     "floor_area_mdape_pct": 32.91,
+     "log10_mae": 0.1694,
+     "strata": {
+      "cold_elec": {
+       "n": 72,
+       "mdape_pct": 73.15,
+       "log10_mae": 0.235
+      },
+      "cold_fuel": {
+       "n": 646,
+       "mdape_pct": 31.73,
+       "log10_mae": 0.1664
+      },
+      "mixed_elec": {
+       "n": 155,
+       "mdape_pct": 45.75,
+       "log10_mae": 0.1927
+      },
+      "mixed_fuel": {
+       "n": 499,
+       "mdape_pct": 32.23,
+       "log10_mae": 0.1604
+      },
+      "warm_elec": {
+       "n": 167,
+       "mdape_pct": 33.89,
+       "log10_mae": 0.1749
+      },
+      "warm_fuel": {
+       "n": 309,
+       "mdape_pct": 30.31,
+       "log10_mae": 0.1604
+      }
+     }
+    },
+    "gbdt_plain": {
+     "floor_area_mdape_pct": 45.08,
+     "log10_mae": 0.2713,
+     "strata": {
+      "cold_elec": {
+       "n": 72,
+       "mdape_pct": 30.46,
+       "log10_mae": 0.1925
+      },
+      "cold_fuel": {
+       "n": 646,
+       "mdape_pct": 57.3,
+       "log10_mae": 0.3649
+      },
+      "mixed_elec": {
+       "n": 155,
+       "mdape_pct": 30.5,
+       "log10_mae": 0.173
+      },
+      "mixed_fuel": {
+       "n": 499,
+       "mdape_pct": 42.76,
+       "log10_mae": 0.2576
+      },
+      "warm_elec": {
+       "n": 167,
+       "mdape_pct": 31.86,
+       "log10_mae": 0.1618
+      },
+      "warm_fuel": {
+       "n": 309,
+       "mdape_pct": 40.8,
+       "log10_mae": 0.2247
+      }
+     }
+    },
+    "gbdt_mono": {
+     "floor_area_mdape_pct": 43.73,
+     "log10_mae": 0.2718,
+     "strata": {
+      "cold_elec": {
+       "n": 72,
+       "mdape_pct": 32.05,
+       "log10_mae": 0.2015
+      },
+      "cold_fuel": {
+       "n": 646,
+       "mdape_pct": 57.34,
+       "log10_mae": 0.3688
+      },
+      "mixed_elec": {
+       "n": 155,
+       "mdape_pct": 28.4,
+       "log10_mae": 0.1681
+      },
+      "mixed_fuel": {
+       "n": 499,
+       "mdape_pct": 42.01,
+       "log10_mae": 0.2527
+      },
+      "warm_elec": {
+       "n": 167,
+       "mdape_pct": 29.74,
+       "log10_mae": 0.1531
+      },
+      "warm_fuel": {
+       "n": 309,
+       "mdape_pct": 39.34,
+       "log10_mae": 0.2322
+      }
+     }
+    }
+   },
+   "train_summary": {
+    "platform": "buildingdetective",
+    "title": "BuildingDetective (RECS 2020)",
+    "domain": "Buildings",
+    "n_train": 1200,
+    "n_val": 300,
+    "n_features": 12,
+    "incumbent_sim_val_mae": 0.253565,
+    "incumbent_sim_val_headline": 60.1083,
+    "plain_sim_val_headline": 29.143,
+    "mono_sim_val_headline": 29.741,
+    "wall_s": 288.6
+   },
+   "gbdt_mono_rebuilt": {
+    "arm": "gbdt_mono",
+    "sim_val_mae": 0.156401,
+    "sim_val_cov68": 0.59,
+    "n_trees_mean0": 257,
+    "n_params_mean0": 12668,
+    "n_params_all": 42902,
+    "numpy_vs_lgb_max_abs_diff": 0.0,
+    "treeshap_efficiency_max_err": 5.329e-15
+   }
+  },
+  "airfoilnet": {
+   "title": "AirfoilNet (UIUC LSAT drag)",
+   "treeshap_twin_dev": {
+    "mode": "forward_residual_gap",
+    "unit": "% drag shift",
+    "n_dev_diag": 429,
+    "ranked": [
+     {
+      "feature": "Angle of attack (alpha)",
+      "mean_real": 12.3958,
+      "mean_twin": 12.454751,
+      "mean_diff": -0.058951,
+      "mean_abs_real": 18.942414,
+      "mean_abs_twin": 25.381692,
+      "mean_abs_diff": 11.285329,
+      "share_of_gap": 0.4136
+     },
+     {
+      "feature": "Mid-chord thickness (25-75% c)",
+      "mean_real": -2.031847,
+      "mean_twin": -1.984779,
+      "mean_diff": -0.047068,
+      "mean_abs_real": 9.948004,
+      "mean_abs_twin": 4.110905,
+      "mean_abs_diff": 9.279823,
+      "share_of_gap": 0.3401
+     },
+     {
+      "feature": "Mid/aft camber",
+      "mean_real": 4.865584,
+      "mean_twin": 4.746466,
+      "mean_diff": 0.119118,
+      "mean_abs_real": 10.728422,
+      "mean_abs_twin": 11.103678,
+      "mean_abs_diff": 2.403661,
+      "share_of_gap": 0.0881
+     },
+     {
+      "feature": "Reynolds number (log10 Re)",
+      "mean_real": -10.945801,
+      "mean_twin": -10.907418,
+      "mean_diff": -0.038383,
+      "mean_abs_real": 30.085744,
+      "mean_abs_twin": 31.849322,
+      "mean_abs_diff": 2.325395,
+      "share_of_gap": 0.0852
+     },
+     {
+      "feature": "Leading-edge thickness (0-25% c)",
+      "mean_real": 0.934938,
+      "mean_twin": 0.840892,
+      "mean_diff": 0.094046,
+      "mean_abs_real": 3.28818,
+      "mean_abs_twin": 2.822996,
+      "mean_abs_diff": 1.41049,
+      "share_of_gap": 0.0517
+     },
+     {
+      "feature": "Trailing-edge thickness (75-100% c)",
+      "mean_real": 1.600822,
+      "mean_twin": 1.593468,
+      "mean_diff": 0.007354,
+      "mean_abs_real": 2.24931,
+      "mean_abs_twin": 2.617382,
+      "mean_abs_diff": 0.582345,
+      "share_of_gap": 0.0213
+     },
+     {
+      "feature": "Maximum thickness (tmax)",
+      "mean_real": 0.475168,
+      "mean_twin": 0.475168,
+      "mean_diff": 0.0,
+      "mean_abs_real": 1.466112,
+      "mean_abs_twin": 1.466112,
+      "mean_abs_diff": 0.0,
+      "share_of_gap": 0.0
+     },
+     {
+      "feature": "Leading-edge camber",
+      "mean_real": 1.32166,
+      "mean_twin": 1.32166,
+      "mean_diff": 0.0,
+      "mean_abs_real": 2.827566,
+      "mean_abs_twin": 2.827566,
+      "mean_abs_diff": 0.0,
+      "share_of_gap": 0.0
+     }
+    ],
+    "by_stratum": {
+     "highRe_highA": [
+      {
+       "feature": "Angle of attack (alpha)",
+       "mean_real": 34.828395,
+       "mean_twin": 46.626874,
+       "mean_diff": -11.798479,
+       "mean_abs_real": 34.85676,
+       "mean_abs_twin": 46.626874,
+       "mean_abs_diff": 15.150687,
+       "share_of_gap": 0.4779
+      },
+      {
+       "feature": "Mid-chord thickness (25-75% c)",
+       "mean_real": 0.762089,
+       "mean_twin": -0.934983,
+       "mean_diff": 1.697072,
+       "mean_abs_real": 8.750869,
+       "mean_abs_twin": 2.26241,
+       "mean_abs_diff": 8.991283,
+       "share_of_gap": 0.2836
+      },
+      {
+       "feature": "Mid/aft camber",
+       "mean_real": 5.582137,
+       "mean_twin": 4.93919,
+       "mean_diff": 0.642947,
+       "mean_abs_real": 7.993558,
+       "mean_abs_twin": 8.625834,
+       "mean_abs_diff": 2.925667,
+       "share_of_gap": 0.0923
+      },
+      {
+       "feature": "Reynolds number (log10 Re)",
+       "mean_real": -27.8932,
+       "mean_twin": -30.521182,
+       "mean_diff": 2.627982,
+       "mean_abs_real": 27.8932,
+       "mean_abs_twin": 30.521182,
+       "mean_abs_diff": 2.820255,
+       "share_of_gap": 0.089
+      },
+      {
+       "feature": "Trailing-edge thickness (75-100% c)",
+       "mean_real": 2.750563,
+       "mean_twin": 2.799863,
+       "mean_diff": -0.0493,
+       "mean_abs_real": 3.20673,
+       "mean_abs_twin": 3.921477,
+       "mean_abs_diff": 0.908145,
+       "share_of_gap": 0.0286
+      },
+      {
+       "feature": "Leading-edge thickness (0-25% c)",
+       "mean_real": -0.474562,
+       "mean_twin": -0.874223,
+       "mean_diff": 0.399661,
+       "mean_abs_real": 2.597973,
+       "mean_abs_twin": 3.23394,
+       "mean_abs_diff": 0.907131,
+       "share_of_gap": 0.0286
+      },
+      {
+       "feature": "Maximum thickness (tmax)",
+       "mean_real": 0.654853,
+       "mean_twin": 0.654853,
+       "mean_diff": 0.0,
+       "mean_abs_real": 0.948752,
+       "mean_abs_twin": 0.948752,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      },
+      {
+       "feature": "Leading-edge camber",
+       "mean_real": 2.18708,
+       "mean_twin": 2.18708,
+       "mean_diff": 0.0,
+       "mean_abs_real": 2.287294,
+       "mean_abs_twin": 2.287294,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "highRe_lowA": [
+      {
+       "feature": "Mid-chord thickness (25-75% c)",
+       "mean_real": 0.242552,
+       "mean_twin": -1.715822,
+       "mean_diff": 1.958374,
+       "mean_abs_real": 12.705122,
+       "mean_abs_twin": 4.833826,
+       "mean_abs_diff": 12.705033,
+       "share_of_gap": 0.4692
+      },
+      {
+       "feature": "Angle of attack (alpha)",
+       "mean_real": -0.08813,
+       "mean_twin": -7.386804,
+       "mean_diff": 7.298674,
+       "mean_abs_real": 10.696234,
+       "mean_abs_twin": 13.040308,
+       "mean_abs_diff": 7.886157,
+       "share_of_gap": 0.2912
+      },
+      {
+       "feature": "Mid/aft camber",
+       "mean_real": 5.927798,
+       "mean_twin": 5.563082,
+       "mean_diff": 0.364716,
+       "mean_abs_real": 10.69611,
+       "mean_abs_twin": 11.281236,
+       "mean_abs_diff": 3.030223,
+       "share_of_gap": 0.1119
+      },
+      {
+       "feature": "Leading-edge thickness (0-25% c)",
+       "mean_real": 1.929579,
+       "mean_twin": 1.367602,
+       "mean_diff": 0.561977,
+       "mean_abs_real": 3.186845,
+       "mean_abs_twin": 2.333098,
+       "mean_abs_diff": 1.71408,
+       "share_of_gap": 0.0633
+      },
+      {
+       "feature": "Reynolds number (log10 Re)",
+       "mean_real": -30.951638,
+       "mean_twin": -31.516428,
+       "mean_diff": 0.56479,
+       "mean_abs_real": 30.951638,
+       "mean_abs_twin": 31.516428,
+       "mean_abs_diff": 1.334382,
+       "share_of_gap": 0.0493
+      },
+      {
+       "feature": "Trailing-edge thickness (75-100% c)",
+       "mean_real": 1.152273,
+       "mean_twin": 1.145697,
+       "mean_diff": 0.006576,
+       "mean_abs_real": 1.513596,
+       "mean_abs_twin": 1.631838,
+       "mean_abs_diff": 0.407242,
+       "share_of_gap": 0.015
+      },
+      {
+       "feature": "Maximum thickness (tmax)",
+       "mean_real": 0.63776,
+       "mean_twin": 0.63776,
+       "mean_diff": 0.0,
+       "mean_abs_real": 1.279939,
+       "mean_abs_twin": 1.279939,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      },
+      {
+       "feature": "Leading-edge camber",
+       "mean_real": 1.316339,
+       "mean_twin": 1.316339,
+       "mean_diff": 0.0,
+       "mean_abs_real": 3.708744,
+       "mean_abs_twin": 3.708744,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "lowRe_highA": [
+      {
+       "feature": "Angle of attack (alpha)",
+       "mean_real": 28.102678,
+       "mean_twin": 44.429645,
+       "mean_diff": -16.326967,
+       "mean_abs_real": 28.699894,
+       "mean_abs_twin": 44.429645,
+       "mean_abs_diff": 17.978148,
+       "share_of_gap": 0.5649
+      },
+      {
+       "feature": "Reynolds number (log10 Re)",
+       "mean_real": 22.848078,
+       "mean_twin": 28.277075,
+       "mean_diff": -5.428997,
+       "mean_abs_real": 27.282605,
+       "mean_abs_twin": 32.006114,
+       "mean_abs_diff": 5.428997,
+       "share_of_gap": 0.1706
+      },
+      {
+       "feature": "Mid-chord thickness (25-75% c)",
+       "mean_real": -4.381145,
+       "mean_twin": -1.749498,
+       "mean_diff": -2.631647,
+       "mean_abs_real": 4.829189,
+       "mean_abs_twin": 2.625207,
+       "mean_abs_diff": 4.573125,
+       "share_of_gap": 0.1437
+      },
+      {
+       "feature": "Mid/aft camber",
+       "mean_real": 4.779064,
+       "mean_twin": 5.540751,
+       "mean_diff": -0.761686,
+       "mean_abs_real": 11.442452,
+       "mean_abs_twin": 11.52068,
+       "mean_abs_diff": 1.796352,
+       "share_of_gap": 0.0564
+      },
+      {
+       "feature": "Trailing-edge thickness (75-100% c)",
+       "mean_real": 2.495852,
+       "mean_twin": 2.40079,
+       "mean_diff": 0.095063,
+       "mean_abs_real": 3.489646,
+       "mean_abs_twin": 4.460438,
+       "mean_abs_diff": 1.08424,
+       "share_of_gap": 0.0341
+      },
+      {
+       "feature": "Leading-edge thickness (0-25% c)",
+       "mean_real": 1.340013,
+       "mean_twin": 1.798787,
+       "mean_diff": -0.458775,
+       "mean_abs_real": 3.451402,
+       "mean_abs_twin": 3.513464,
+       "mean_abs_diff": 0.967071,
+       "share_of_gap": 0.0304
+      },
+      {
+       "feature": "Maximum thickness (tmax)",
+       "mean_real": 0.324367,
+       "mean_twin": 0.324367,
+       "mean_diff": 0.0,
+       "mean_abs_real": 1.52307,
+       "mean_abs_twin": 1.52307,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      },
+      {
+       "feature": "Leading-edge camber",
+       "mean_real": 1.942167,
+       "mean_twin": 1.942167,
+       "mean_diff": 0.0,
+       "mean_abs_real": 2.241627,
+       "mean_abs_twin": 2.241627,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ],
+     "lowRe_lowA": [
+      {
+       "feature": "Angle of attack (alpha)",
+       "mean_real": 0.853249,
+       "mean_twin": -8.17241,
+       "mean_diff": 9.025659,
+       "mean_abs_real": 10.335824,
+       "mean_abs_twin": 13.054608,
+       "mean_abs_diff": 9.477479,
+       "share_of_gap": 0.4824
+      },
+      {
+       "feature": "Mid-chord thickness (25-75% c)",
+       "mean_real": -8.655362,
+       "mean_twin": -3.948888,
+       "mean_diff": -4.706474,
+       "mean_abs_real": 8.859709,
+       "mean_abs_twin": 5.788876,
+       "mean_abs_diff": 5.494277,
+       "share_of_gap": 0.2796
+      },
+      {
+       "feature": "Reynolds number (log10 Re)",
+       "mean_real": 30.301725,
+       "mean_twin": 31.669207,
+       "mean_diff": -1.367482,
+       "mean_abs_real": 32.667266,
+       "mean_abs_twin": 34.053836,
+       "mean_abs_diff": 1.899151,
+       "share_of_gap": 0.0967
+      },
+      {
+       "feature": "Leading-edge thickness (0-25% c)",
+       "mean_real": 0.424049,
+       "mean_twin": 1.32242,
+       "mean_diff": -0.898371,
+       "mean_abs_real": 4.241934,
+       "mean_abs_twin": 2.901588,
+       "mean_abs_diff": 1.675449,
+       "share_of_gap": 0.0853
+      },
+      {
+       "feature": "Mid/aft camber",
+       "mean_real": 1.902198,
+       "mean_twin": 2.403952,
+       "mean_diff": -0.501754,
+       "mean_abs_real": 13.725663,
+       "mean_abs_twin": 13.537588,
+       "mean_abs_diff": 0.859019,
+       "share_of_gap": 0.0437
+      },
+      {
+       "feature": "Trailing-edge thickness (75-100% c)",
+       "mean_real": 0.571912,
+       "mean_twin": 0.544854,
+       "mean_diff": 0.027058,
+       "mean_abs_real": 1.831743,
+       "mean_abs_twin": 1.925551,
+       "mean_abs_diff": 0.242262,
+       "share_of_gap": 0.0123
+      },
+      {
+       "feature": "Maximum thickness (tmax)",
+       "mean_real": 0.0162,
+       "mean_twin": 0.0162,
+       "mean_diff": 0.0,
+       "mean_abs_real": 2.440893,
+       "mean_abs_twin": 2.440893,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      },
+      {
+       "feature": "Leading-edge camber",
+       "mean_real": -0.090078,
+       "mean_twin": -0.090078,
+       "mean_diff": 0.0,
+       "mean_abs_real": 2.059335,
+       "mean_abs_twin": 2.059335,
+       "mean_abs_diff": 0.0,
+       "share_of_gap": 0.0
+      }
+     ]
+    }
+   },
+   "dev_metrics": {
+    "incumbent": {
+     "lncd_mae": 0.224,
+     "cd_mdape_pct": 12.89,
+     "strata": {
+      "highRe_highA": {
+       "n": 109,
+       "lncd_mae": 0.18,
+       "cd_mdape_pct": 7.59
+      },
+      "highRe_lowA": {
+       "n": 179,
+       "lncd_mae": 0.2228,
+       "cd_mdape_pct": 11.55
+      },
+      "lowRe_highA": {
+       "n": 52,
+       "lncd_mae": 0.3415,
+       "cd_mdape_pct": 34.64
+      },
+      "lowRe_lowA": {
+       "n": 89,
+       "lncd_mae": 0.2118,
+       "cd_mdape_pct": 17.31
+      }
+     }
+    },
+    "gbdt_plain": {
+     "lncd_mae": 0.2379,
+     "cd_mdape_pct": 14.31,
+     "strata": {
+      "highRe_highA": {
+       "n": 109,
+       "lncd_mae": 0.2436,
+       "cd_mdape_pct": 17.69
+      },
+      "highRe_lowA": {
+       "n": 179,
+       "lncd_mae": 0.2579,
+       "cd_mdape_pct": 11.47
+      },
+      "lowRe_highA": {
+       "n": 52,
+       "lncd_mae": 0.2757,
+       "cd_mdape_pct": 28.33
+      },
+      "lowRe_lowA": {
+       "n": 89,
+       "lncd_mae": 0.1685,
+       "cd_mdape_pct": 11.52
+      }
+     }
+    },
+    "gbdt_mono": {
+     "lncd_mae": 0.2373,
+     "cd_mdape_pct": 14.51,
+     "strata": {
+      "highRe_highA": {
+       "n": 109,
+       "lncd_mae": 0.2303,
+       "cd_mdape_pct": 17.15
+      },
+      "highRe_lowA": {
+       "n": 179,
+       "lncd_mae": 0.2396,
+       "cd_mdape_pct": 9.09
+      },
+      "lowRe_highA": {
+       "n": 52,
+       "lncd_mae": 0.3064,
+       "cd_mdape_pct": 31.99
+      },
+      "lowRe_lowA": {
+       "n": 89,
+       "lncd_mae": 0.201,
+       "cd_mdape_pct": 15.47
+      }
+     }
+    }
+   },
+   "train_summary": {
+    "platform": "airfoilnet",
+    "title": "AirfoilNet (UIUC LSAT drag)",
+    "domain": "Aerodynamics",
+    "n_train": 1849,
+    "n_val": 324,
+    "n_features": 53,
+    "incumbent_sim_val_mae": 0.156512,
+    "incumbent_sim_val_headline": 0.1565,
+    "plain_sim_val_headline": 0.1427,
+    "mono_sim_val_headline": 0.15,
+    "wall_s": 862.1
+   },
+   "gbdt_mono_rebuilt": {
+    "arm": "gbdt_mono",
+    "sim_val_mae": 0.149966,
+    "sim_val_cov68": 0.4722,
+    "n_trees_mean0": 149,
+    "n_params_mean0": 13484,
+    "n_params_all": 73130,
+    "numpy_vs_lgb_max_abs_diff": 0.0,
+    "treeshap_efficiency_max_err": 2.665e-15
+   }
+  },
+  "energynet": {
+   "title": "EnergyNet (VED real trips)",
+   "treeshap_twin_dev": {
+    "mode": "forward_residual_gap",
+    "unit": "% energy correction",
+    "n_dev_diag": 1496,
+    "ranked": [
+     {
+      "feature": "Powertrain, labels & year",
+      "mean_real": 8.006176,
+      "mean_twin": 8.044515,
+      "mean_diff": -0.038339,
+      "mean_abs_real": 12.381503,
+      "mean_abs_twin": 11.691994,
+      "mean_abs_diff": 3.892911,
+      "share_of_gap": 0.2891
+     },
+     {
+      "feature": "Ambient temperature",
+      "mean_real": -2.788862,
+      "mean_twin": -2.846021,
+      "mean_diff": 0.057159,
+      "mean_abs_real": 6.780053,
+      "mean_abs_twin": 3.803645,
+      "mean_abs_diff": 3.324802,
+      "share_of_gap": 0.2469
+     },
+     {
+      "feature": "Duration & idle",
+      "mean_real": -0.007023,
+      "mean_twin": 0.107531,
+      "mean_diff": -0.114554,
+      "mean_abs_real": 3.973719,
+      "mean_abs_twin": 3.370025,
+      "mean_abs_diff": 2.202655,
+      "share_of_gap": 0.1636
+     },
+     {
+      "feature": "Speed & stops",
+      "mean_real": -3.075043,
+      "mean_twin": -3.134565,
+      "mean_diff": 0.059522,
+      "mean_abs_real": 4.673099,
+      "mean_abs_twin": 4.121182,
+      "mean_abs_diff": 1.548815,
+      "share_of_gap": 0.115
+     },
+     {
+      "feature": "Rolling work",
+      "mean_real": 0.177707,
+      "mean_twin": 0.186695,
+      "mean_diff": -0.008988,
+      "mean_abs_real": 1.633,
+      "mean_abs_twin": 0.768251,
+      "mean_abs_diff": 0.920454,
+      "share_of_gap": 0.0684
+     },
+     {
+      "feature": "Grade work",
+      "mean_real": 0.526306,
+      "mean_twin": 0.506837,
+      "mean_diff": 0.019469,
+      "mean_abs_real": 1.689605,
+      "mean_abs_twin": 1.275268,
+      "mean_abs_diff": 0.677508,
+      "share_of_gap": 0.0503
+     },
+     {
+      "feature": "Mass & class",
+      "mean_real": 6.118349,
+      "mean_twin": 6.12161,
+      "mean_diff": -0.003261,
+      "mean_abs_real": 6.346311,
+      "mean_abs_twin": 6.181383,
+      "mean_abs_diff": 0.482099,
+      "share_of_gap": 0.0358
+     },
+     {
+      "feature": "Aero work",
+      "mean_real": 0.033714,
+      "mean_twin": 0.027834,
+      "mean_diff": 0.00588,
+      "mean_abs_real": 2.38549,
+      "mean_abs_twin": 2.267393,
+      "mean_abs_diff": 0.416639,
+      "share_of_gap": 0.0309
+     }
+    ],
+    "by_stratum": {
+     "EV": [
+      {
+       "feature": "Powertrain, labels & year",
+       "mean_real": -6.784734,
+       "mean_twin": -2.688077,
+       "mean_diff": -4.096657,
+       "mean_abs_real": 7.584524,
+       "mean_abs_twin": 4.897613,
+       "mean_abs_diff": 4.096657,
+       "share_of_gap": 0.2685
+      },
+      {
+       "feature": "Ambient temperature",
+       "mean_real": -4.14932,
+       "mean_twin": -3.686144,
+       "mean_diff": -0.463176,
+       "mean_abs_real": 9.79496,
+       "mean_abs_twin": 5.930346,
+       "mean_abs_diff": 3.899184,
+       "share_of_gap": 0.2555
+      },
+      {
+       "feature": "Duration & idle",
+       "mean_real": -3.185544,
+       "mean_twin": -1.71089,
+       "mean_diff": -1.474654,
+       "mean_abs_real": 3.856811,
+       "mean_abs_twin": 2.316512,
+       "mean_abs_diff": 2.94796,
+       "share_of_gap": 0.1932
+      },
+      {
+       "feature": "Speed & stops",
+       "mean_real": -4.920809,
+       "mean_twin": -4.550798,
+       "mean_diff": -0.370011,
+       "mean_abs_real": 5.83767,
+       "mean_abs_twin": 4.874474,
+       "mean_abs_diff": 2.025116,
+       "share_of_gap": 0.1327
+      },
+      {
+       "feature": "Rolling work",
+       "mean_real": 0.112804,
+       "mean_twin": 0.129717,
+       "mean_diff": -0.016913,
+       "mean_abs_real": 1.67516,
+       "mean_abs_twin": 0.705265,
+       "mean_abs_diff": 1.004377,
+       "share_of_gap": 0.0658
+      },
+      {
+       "feature": "Grade work",
+       "mean_real": 0.608972,
+       "mean_twin": 0.82071,
+       "mean_diff": -0.211738,
+       "mean_abs_real": 1.383461,
+       "mean_abs_twin": 1.119613,
+       "mean_abs_diff": 0.784634,
+       "share_of_gap": 0.0514
+      },
+      {
+       "feature": "Aero work",
+       "mean_real": -0.237578,
+       "mean_twin": -0.213294,
+       "mean_diff": -0.024285,
+       "mean_abs_real": 2.791232,
+       "mean_abs_twin": 2.673567,
+       "mean_abs_diff": 0.424141,
+       "share_of_gap": 0.0278
+      },
+      {
+       "feature": "Mass & class",
+       "mean_real": 7.919313,
+       "mean_twin": 7.865693,
+       "mean_diff": 0.053619,
+       "mean_abs_real": 7.919313,
+       "mean_abs_twin": 7.865693,
+       "mean_abs_diff": 0.077426,
+       "share_of_gap": 0.0051
+      }
+     ],
+     "HEV": [
+      {
+       "feature": "Ambient temperature",
+       "mean_real": -1.728439,
+       "mean_twin": -2.229366,
+       "mean_diff": 0.500927,
+       "mean_abs_real": 4.891702,
+       "mean_abs_twin": 2.604318,
+       "mean_abs_diff": 2.76205,
+       "share_of_gap": 0.2389
+      },
+      {
+       "feature": "Duration & idle",
+       "mean_real": -1.422609,
+       "mean_twin": -1.273398,
+       "mean_diff": -0.149211,
+       "mean_abs_real": 1.867189,
+       "mean_abs_twin": 1.952147,
+       "mean_abs_diff": 2.714851,
+       "share_of_gap": 0.2348
+      },
+      {
+       "feature": "Powertrain, labels & year",
+       "mean_real": 5.26733,
+       "mean_twin": 6.01989,
+       "mean_diff": -0.75256,
+       "mean_abs_real": 10.521914,
+       "mean_abs_twin": 9.894184,
+       "mean_abs_diff": 2.388043,
+       "share_of_gap": 0.2066
+      },
+      {
+       "feature": "Speed & stops",
+       "mean_real": -2.255976,
+       "mean_twin": -2.193556,
+       "mean_diff": -0.06242,
+       "mean_abs_real": 3.91683,
+       "mean_abs_twin": 3.378868,
+       "mean_abs_diff": 1.254287,
+       "share_of_gap": 0.1085
+      },
+      {
+       "feature": "Rolling work",
+       "mean_real": 0.196593,
+       "mean_twin": 0.144378,
+       "mean_diff": 0.052215,
+       "mean_abs_real": 1.611388,
+       "mean_abs_twin": 0.715745,
+       "mean_abs_diff": 0.930222,
+       "share_of_gap": 0.0805
+      },
+      {
+       "feature": "Grade work",
+       "mean_real": 0.838329,
+       "mean_twin": 0.629227,
+       "mean_diff": 0.209102,
+       "mean_abs_real": 1.583347,
+       "mean_abs_twin": 1.1079,
+       "mean_abs_diff": 0.800778,
+       "share_of_gap": 0.0693
+      },
+      {
+       "feature": "Aero work",
+       "mean_real": 0.415431,
+       "mean_twin": 0.390952,
+       "mean_diff": 0.024479,
+       "mean_abs_real": 2.411288,
+       "mean_abs_twin": 2.361374,
+       "mean_abs_diff": 0.394485,
+       "share_of_gap": 0.0341
+      },
+      {
+       "feature": "Mass & class",
+       "mean_real": 6.091829,
+       "mean_twin": 6.071179,
+       "mean_diff": 0.02065,
+       "mean_abs_real": 6.091829,
+       "mean_abs_twin": 6.071179,
+       "mean_abs_diff": 0.315872,
+       "share_of_gap": 0.0273
+      }
+     ],
+     "ICE": [
+      {
+       "feature": "Powertrain, labels & year",
+       "mean_real": 12.832203,
+       "mean_twin": 8.773863,
+       "mean_diff": 4.058341,
+       "mean_abs_real": 13.33391,
+       "mean_abs_twin": 10.98849,
+       "mean_abs_diff": 4.074649,
+       "share_of_gap": 0.377
+      },
+      {
+       "feature": "Ambient temperature",
+       "mean_real": -2.065848,
+       "mean_twin": -2.347046,
+       "mean_diff": 0.281199,
+       "mean_abs_real": 4.07537,
+       "mean_abs_twin": 2.661629,
+       "mean_abs_diff": 1.935454,
+       "share_of_gap": 0.1791
+      },
+      {
+       "feature": "Duration & idle",
+       "mean_real": 4.05606,
+       "mean_twin": 3.493015,
+       "mean_diff": 0.563045,
+       "mean_abs_real": 4.434669,
+       "mean_abs_twin": 3.882021,
+       "mean_abs_diff": 1.292679,
+       "share_of_gap": 0.1196
+      },
+      {
+       "feature": "Speed & stops",
+       "mean_real": -1.931899,
+       "mean_twin": -1.857579,
+       "mean_diff": -0.07432,
+       "mean_abs_real": 4.137664,
+       "mean_abs_twin": 3.359968,
+       "mean_abs_diff": 1.174486,
+       "share_of_gap": 0.1087
+      },
+      {
+       "feature": "Rolling work",
+       "mean_real": 0.344345,
+       "mean_twin": 0.267486,
+       "mean_diff": 0.076859,
+       "mean_abs_real": 1.533875,
+       "mean_abs_twin": 0.76762,
+       "mean_abs_diff": 0.808839,
+       "share_of_gap": 0.0748
+      },
+      {
+       "feature": "Mass & class",
+       "mean_real": 5.28211,
+       "mean_twin": 5.218243,
+       "mean_diff": 0.063867,
+       "mean_abs_real": 5.810839,
+       "mean_abs_twin": 5.35688,
+       "mean_abs_diff": 0.799763,
+       "share_of_gap": 0.074
+      },
+      {
+       "feature": "Grade work",
+       "mean_real": 0.602319,
+       "mean_twin": 0.553822,
+       "mean_diff": 0.048497,
+       "mean_abs_real": 1.39789,
+       "mean_abs_twin": 1.162861,
+       "mean_abs_diff": 0.38405,
+       "share_of_gap": 0.0355
+      },
+      {
+       "feature": "Aero work",
+       "mean_real": -0.173103,
+       "mean_twin": -0.046027,
+       "mean_diff": -0.127076,
+       "mean_abs_real": 2.079129,
+       "mean_abs_twin": 2.000778,
+       "mean_abs_diff": 0.338239,
+       "share_of_gap": 0.0313
+      }
+     ],
+     "PHEV": [
+      {
+       "feature": "Ambient temperature",
+       "mean_real": -4.068616,
+       "mean_twin": -3.709752,
+       "mean_diff": -0.358865,
+       "mean_abs_real": 11.452919,
+       "mean_abs_twin": 5.431718,
+       "mean_abs_diff": 6.163465,
+       "share_of_gap": 0.3236
+      },
+      {
+       "feature": "Powertrain, labels & year",
+       "mean_real": 12.586209,
+       "mean_twin": 17.023608,
+       "mean_diff": -4.437399,
+       "mean_abs_real": 15.94976,
+       "mean_abs_twin": 20.186047,
+       "mean_abs_diff": 4.66037,
+       "share_of_gap": 0.2447
+      },
+      {
+       "feature": "Duration & idle",
+       "mean_real": -4.445211,
+       "mean_twin": -4.08973,
+       "mean_diff": -0.355481,
+       "mean_abs_real": 4.955306,
+       "mean_abs_twin": 4.412434,
+       "mean_abs_diff": 3.000744,
+       "share_of_gap": 0.1575
+      },
+      {
+       "feature": "Speed & stops",
+       "mean_real": -4.604488,
+       "mean_twin": -5.389421,
+       "mean_diff": 0.784934,
+       "mean_abs_real": 5.468288,
+       "mean_abs_twin": 5.695928,
+       "mean_abs_diff": 2.176335,
+       "share_of_gap": 0.1142
+      },
+      {
+       "feature": "Grade work",
+       "mean_real": 0.03523,
+       "mean_twin": 0.051045,
+       "mean_diff": -0.015815,
+       "mean_abs_real": 2.621562,
+       "mean_abs_twin": 1.77429,
+       "mean_abs_diff": 1.079214,
+       "share_of_gap": 0.0567
+      },
+      {
+       "feature": "Rolling work",
+       "mean_real": -0.123962,
+       "mean_twin": 0.105649,
+       "mean_diff": -0.229611,
+       "mean_abs_real": 1.818543,
+       "mean_abs_twin": 0.86604,
+       "mean_abs_diff": 1.070306,
+       "share_of_gap": 0.0562
+      },
+      {
+       "feature": "Aero work",
+       "mean_real": 0.343204,
+       "mean_twin": 0.05926,
+       "mean_diff": 0.283944,
+       "mean_abs_real": 2.655388,
+       "mean_abs_twin": 2.397361,
+       "mean_abs_diff": 0.588731,
+       "share_of_gap": 0.0309
+      },
+      {
+       "feature": "Mass & class",
+       "mean_real": 6.376269,
+       "mean_twin": 6.582512,
+       "mean_diff": -0.206243,
+       "mean_abs_real": 6.376269,
+       "mean_abs_twin": 6.582512,
+       "mean_abs_diff": 0.309852,
+       "share_of_gap": 0.0163
+      }
+     ]
+    },
+    "spotlight_cases": [
+     {
+      "name": "Cold-weather commute (VED dev, T < 0 °C)",
+      "n_trips": 327,
+      "n_cars": 15,
+      "features": [
+       "Aero work",
+       "Rolling work",
+       "Grade work",
+       "Speed & stops",
+       "Ambient temperature",
+       "Duration & idle",
+       "Mass & class",
+       "Powertrain, labels & year"
+      ],
+      "twin_mean": [
+       1.1,
+       -0.62,
+       0.35,
+       -3.52,
+       1.35,
+       0.29,
+       5.57,
+       6.37
+      ],
+      "real_mean": [
+       1.45,
+       -1.64,
+       0.35,
+       -2.99,
+       7.77,
+       0.48,
+       5.53,
+       6.63
+      ],
+      "twin_abs": [
+       2.5,
+       1.15,
+       1.08,
+       4.41,
+       2.18,
+       3.28,
+       5.6,
+       10.68
+      ],
+      "real_abs": [
+       2.81,
+       2.77,
+       1.26,
+       4.99,
+       7.77,
+       3.19,
+       5.77,
+       11.41
+      ],
+      "diff_mean": [
+       0.35,
+       -1.02,
+       0.0,
+       0.53,
+       6.42,
+       0.19,
+       -0.05,
+       0.25
+      ],
+      "mean_real_minus_sim_pct": 9.6
+     },
+     {
+      "name": "City hybrid (VED dev, HEV stop-and-go)",
+      "n_trips": 138,
+      "n_cars": 5,
+      "features": [
+       "Aero work",
+       "Rolling work",
+       "Grade work",
+       "Speed & stops",
+       "Ambient temperature",
+       "Duration & idle",
+       "Mass & class",
+       "Powertrain, labels & year"
+      ],
+      "twin_mean": [
+       0.33,
+       0.14,
+       0.65,
+       -0.89,
+       -2.22,
+       -1.09,
+       6.17,
+       4.53
+      ],
+      "real_mean": [
+       0.48,
+       0.25,
+       0.8,
+       -0.24,
+       -1.52,
+       -1.45,
+       6.17,
+       3.14
+      ],
+      "twin_abs": [
+       2.38,
+       0.74,
+       1.02,
+       2.95,
+       2.68,
+       1.93,
+       6.17,
+       9.44
+      ],
+      "real_abs": [
+       2.41,
+       1.58,
+       1.44,
+       3.35,
+       5.06,
+       1.86,
+       6.17,
+       9.87
+      ],
+      "diff_mean": [
+       0.16,
+       0.11,
+       0.14,
+       0.66,
+       0.7,
+       -0.35,
+       -0.0,
+       -1.38
+      ],
+      "mean_real_minus_sim_pct": -0.94
+     },
+     {
+      "name": "Mild highway ICE (VED dev, twin agrees)",
+      "n_trips": 12,
+      "n_cars": 3,
+      "features": [
+       "Aero work",
+       "Rolling work",
+       "Grade work",
+       "Speed & stops",
+       "Ambient temperature",
+       "Duration & idle",
+       "Mass & class",
+       "Powertrain, labels & year"
+      ],
+      "twin_mean": [
+       -0.54,
+       0.76,
+       1.31,
+       -1.21,
+       -3.41,
+       -0.46,
+       4.81,
+       7.54
+      ],
+      "real_mean": [
+       -0.83,
+       1.25,
+       1.38,
+       -1.84,
+       -4.83,
+       -1.22,
+       4.42,
+       11.23
+      ],
+      "twin_abs": [
+       1.6,
+       0.76,
+       1.31,
+       1.8,
+       3.41,
+       0.56,
+       5.27,
+       7.54
+      ],
+      "real_abs": [
+       1.57,
+       1.25,
+       1.44,
+       2.4,
+       4.83,
+       1.26,
+       5.82,
+       11.23
+      ],
+      "diff_mean": [
+       -0.28,
+       0.49,
+       0.07,
+       -0.63,
+       -1.42,
+       -0.76,
+       -0.39,
+       3.69
+      ],
+      "mean_real_minus_sim_pct": 1.97
+     }
+    ]
+   },
+   "dev_metrics": {
+    "incumbent": {
+     "headline_mdape_pct": 11.85,
+     "pooled_mdape_pct": 9.58,
+     "log_mae": 0.1527,
+     "strata": {
+      "EV": {
+       "n": 258,
+       "mdape_pct": 13.96,
+       "log_mae": 0.1798
+      },
+      "HEV": {
+       "n": 275,
+       "mdape_pct": 12.61,
+       "log_mae": 0.1593
+      },
+      "ICE": {
+       "n": 645,
+       "mdape_pct": 6.63,
+       "log_mae": 0.0818
+      },
+      "PHEV": {
+       "n": 318,
+       "mdape_pct": 16.31,
+       "log_mae": 0.2686
+      }
+     }
+    },
+    "gbdt_plain": {
+     "headline_mdape_pct": 14.37,
+     "pooled_mdape_pct": 11.93,
+     "log_mae": 0.168,
+     "strata": {
+      "EV": {
+       "n": 258,
+       "mdape_pct": 17.73,
+       "log_mae": 0.2081
+      },
+      "HEV": {
+       "n": 275,
+       "mdape_pct": 13.44,
+       "log_mae": 0.1555
+      },
+      "ICE": {
+       "n": 645,
+       "mdape_pct": 7.95,
+       "log_mae": 0.1006
+      },
+      "PHEV": {
+       "n": 318,
+       "mdape_pct": 21.72,
+       "log_mae": 0.2829
+      }
+     }
+    },
+    "gbdt_mono": {
+     "headline_mdape_pct": 14.94,
+     "pooled_mdape_pct": 12.06,
+     "log_mae": 0.1679,
+     "strata": {
+      "EV": {
+       "n": 258,
+       "mdape_pct": 17.1,
+       "log_mae": 0.2096
+      },
+      "HEV": {
+       "n": 275,
+       "mdape_pct": 13.0,
+       "log_mae": 0.1528
+      },
+      "ICE": {
+       "n": 645,
+       "mdape_pct": 8.33,
+       "log_mae": 0.1037
+      },
+      "PHEV": {
+       "n": 318,
+       "mdape_pct": 23.5,
+       "log_mae": 0.2776
+      }
+     }
+    }
+   },
+   "train_summary": {
+    "platform": "energynet",
+    "title": "EnergyNet (VED real trips)",
+    "domain": "Transportation",
+    "n_train": 7971,
+    "n_val": 1595,
+    "n_features": 151,
+    "incumbent_sim_val_mae": 0.117654,
+    "incumbent_sim_val_headline": 11.4949,
+    "plain_sim_val_headline": 15.7817,
+    "mono_sim_val_headline": 16.2449,
+    "wall_s": 1397.5
+   },
+   "gbdt_mono_rebuilt": {
+    "arm": "gbdt_mono",
+    "sim_val_mae": 0.144552,
+    "sim_val_cov68": 0.6063,
+    "n_trees_mean0": 280,
+    "n_params_mean0": 52132,
+    "n_params_all": 306254,
+    "numpy_vs_lgb_max_abs_diff": 0.0,
+    "treeshap_efficiency_max_err": 4.585e-14
+   }
+  }
+ }
+}

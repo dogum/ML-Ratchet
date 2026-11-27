@@ -68,8 +68,11 @@ def test_site_shap_cases_are_real_measured_values():
     assert "made-up numbers" not in mf_txt.lower()
     assert "made-up numbers" not in astro_txt.lower()
 
-    # Check that each spotlight case's first twin/real values from results.json appear in model-families.ts
-    cases = _results()["platforms"]["energynet"]["treeshap_twin_dev"]["spotlight_cases"]
+    # Each spotlight case's twin/real vectors must appear in model-families.ts: from the dev rebuild after the
+    # 27 Nov 2026 review (corrected feature groups) when present, else from the exam-time results.
+    rebuild = ROOT / "experiments" / "treetwin" / "dev_rebuild_2026-11-27.json"
+    src = json.loads(rebuild.read_text(encoding="utf-8")) if rebuild.exists() else _results()
+    cases = src["platforms"]["energynet"]["treeshap_twin_dev"]["spotlight_cases"]
     assert len(cases) >= 3
     for c in cases:
         twin_str = ", ".join(f"{v}" for v in c["twin_mean"])

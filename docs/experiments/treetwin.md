@@ -16,8 +16,8 @@ Everything was pre-registered and frozen in [`experiments/treetwin/PREREG.md`](.
 - **Point accuracy (GBDT vs released neural incumbent): 0 wins, 0 ties, 3 losses on pooled exam headlines.** On smooth physics manifolds (EnergyNet's 151 road-load work integrals, AirfoilNet's 48 airfoil coordinates) and against BuildingDetective's residential-calibrated MLP, pure simulation-trained trees lost the overall exam headline on all three platforms (`+2.71 pp` on EnergyNet, `+0.018` ln Cd MAE on AirfoilNet, `+11.34 pp` on BuildingDetective). Yet trees beat the released neural incumbents in specific weak strata — every electric-heated RECS climate band (`28.3–34.8%` vs `37.6–63.4%`), unseen EnergyNet EVs (`17.7–19.4%` vs `23.2%`), and AirfoilNet `lowRe_highA` (`GBDT-Plain` `0.261` vs `0.290`) — making them a strong complementary arm and mixture-of-experts candidate, not a drop-in replacement.
 - **Monotone physics constraints (`GBDT-Mono` vs `GBDT-Plain`): neutral on 2 exams, small loss on 1.** Monotone constraints tied on BuildingDetective (`-0.34 pp`, 95% CI `[-0.80, +0.25]`) and EnergyNet (`+0.27 pp`, `[-0.39, +0.95]`), and lost slightly on AirfoilNet (`+0.0052`, `[+0.0014, +0.0090]`) specifically in `lowRe_highA`, where thicker airfoils delay leading-edge stall and have *lower* near-stall drag than thin sections — violating a global `+1` thickness constraint.
 - **Mondrian conformal calibration (nominal 68.3%): clear win on all 3 released neural incumbents (and 5 of 6 platform x learner pairs).** Per-stratum `MondrianConformal` (`shrink_k=10, widen_only=True`) cut worst-stratum exam under-coverage from `15.3 pp -> 5.7 pp` on BuildingDetective, `21.6 pp -> 4.7 pp` on AirfoilNet (`4.6x` reduction), and `31.1 pp -> 27.0 pp` on EnergyNet Incumbent (and `14.4 pp -> 5.8 pp` on EnergyNet `GBDT-Mono`) with nearly unchanged or narrower mean interval widths.
-- **Exact TreeSHAP twin diagnostics: turns the twin test into a ranked physical bug list.** On 300 paired RECS dev twins with **zero dev labels**, `shap_twin_diff` immediately isolated `Electricity (kWh/yr)` (`-46.5%` floor-area shift, `64.6%` of total twin gap) as the dominant error in uncalibrated BuildingSim. On EnergyNet's 327 freezing-weather VED dev trips (`T < 0 C`), real trips burn `+9.59%` more energy than RoadSim predicts, and exact TreeSHAP isolates `+6.38%` directly to `Ambient temperature` (`+7.84%` real vs `+1.46%` twin), replacing the placeholder chart on the Model families page with real measurements.
-- **Cross-family disagreement (`|GBDT-Mono - Incumbent|`):** correlated positively and significantly (`p < 1e-10`) with real exam error on all three exams without labels; top-10% disagreement cases carried `2.11x` higher real error on EnergyNet, `1.90x` on AirfoilNet, and `1.09x` on BuildingDetective (`r = +0.374` vs `GBDT-Mono` error).
+- **Exact TreeSHAP twin diagnostics: a ranked list of where the simulator and reality part.** On 300 paired RECS dev twins with **zero dev labels**, `shap_twin_diff` isolates `Electricity (kWh/yr)` (-46.6 % floor-area shift, 64.2 % of the twin gap) as BuildingSim's main error. On EnergyNet's 327 freezing VED dev trips the RoadSim-trained forest under-reads energy by 9.6 %, and TreeSHAP puts +6.42 % of it on ambient temperature. (Section 3 was rebuilt on 27 Nov 2026 after a grouping error; see there.)
+- **Cross-family disagreement (`|GBDT-Mono - Incumbent|`):** correlated positively with real exam error on all three exams without labels; top-10 % disagreement rows carried 2.11× higher real error on EnergyNet, 1.90× on AirfoilNet and 1.09× on BuildingDetective. The p-values treat rows as independent; rows cluster by unit (25,793 EnergyNet rows from 350 cars, 5,565 AirfoilNet rows from 71 airfoils), so they overstate the evidence. The enrichment ratios are the result to read.
 
 ## What this does and does not show
 
@@ -63,43 +63,50 @@ Empirical-Bayes shrinkage (`shrink_k=10`) specifically helped on AirfoilNet's sm
 
 ## 3. Exact TreeSHAP Twin-Test Diagnostics (Real Dev vs Simulator)
 
-### BuildingDetective (RECS 2020) — zero-label paired input shift (`300` BuildingSim twins, `% floor-area shift`)
+*Rebuilt 27 Nov 2026 after the PR #19 review ([`dev_rebuild_2026-11-27.json`](../../experiments/treetwin/dev_rebuild_2026-11-27.json), dev only).* The first version of this section had three faults. EnergyNet's feature groups followed the wrong indices: engine size and power sat under aero and rolling work, CdA and Crr under mass, and powertrain, EPA labels, battery and SOC under a group called "Model year". AirfoilNet's maximum-thickness input sat under trailing-edge thickness. And every BuildingSim run had used a constant 3 m/s wind at sea level, because the adapter passed the weather under names BuildingSim does not read. The tables below come from forests rebuilt on Windows with the same scripts and seeds. They are close to, not identical with, the forests the exam scored: dev headline for EnergyNet GBDT-Mono 14.94 % vs 15.01 %, AirfoilNet simulated validation 0.150 vs 0.158. The exam score files keep the original tables as they were run.
 
-Without using a single dev floor-area label, `shap_twin_diff` compares `GBDT-Mono`'s exact TreeSHAP vectors on real RECS annual meters `X_real` against each home's simulated BuildingSim twin meters `X_twin`:
+### BuildingDetective (RECS 2020) — zero-label paired input shift (`300` BuildingSim twins, `% floor-area shift`)
 
 | Rank | Physical feature group | Mean twin | Mean real | Mean real − twin | Mean \|real − twin\| | Gap share |
 |---:|---|---:|---:|---:|---:|---:|
-| 1 | **Electricity (kWh/yr)** | -2.57% | -49.10% | **-46.53%** | **52.16%** | **64.6%** |
-| 2 | Fuel gas/oil (kWh/yr) | +9.36% | +8.63% | -0.73% | 16.33% | 20.2% |
-| 3 | Heating degree days | -12.11% | -6.83% | +5.27% | 9.74% | 12.1% |
-| 4 | Cooling degree days | +0.28% | -0.12% | -0.40% | 2.50% | 3.1% |
+| 1 | Electricity (kWh/yr) | -2.17% | -48.79% | -46.62% | 51.96% | 64.2% |
+| 2 | Fuel gas/oil (kWh/yr) | +10.07% | +8.09% | -1.97% | 16.52% | 20.4% |
+| 3 | Heating degree days | -12.35% | -6.98% | +5.37% | 10.08% | 12.4% |
+| 4 | Cooling degree days | -0.27% | -0.49% | -0.22% | 2.39% | 2.9% |
 
-Uncalibrated BuildingSim predicts substantially higher residential electricity use per m² than real RECS 2020 homes, driving a `-46.5%` floor-area under-read on real meters (`64.6%` of the entire twin gap). That single diagnostic explains why raw-BuildingSim GBDTs lost `+11.3 pp` to BuildingDetective's residential-calibrated MLP.
+With the real wind, the result stands: BuildingSim homes use more electricity per m² than real RECS 2020 homes, and that one input carries about two thirds of the twin gap.
 
 ### EnergyNet (VED dev) — forward residual gap (`1,496` trips across `16` cars, `% energy correction`)
 
+"Twin" here is the attribution of the RoadSim-trained forest; "real" adds a shallow dev-only tree fitted to that forest's dev residuals. The residual is against the forest's prediction, not against RoadSim itself.
+
 | Rank | Physical feature group | Mean twin | Mean real | Mean \|real − twin\| | Gap share |
 |---:|---|---:|---:|---:|---:|
-| 1 | **Model year** | +9.09% | +9.09% | **3.94%** | **28.2%** |
-| 2 | **Ambient temperature** | -2.93% | -2.81% | **3.04%** | **21.8%** |
-| 3 | **Accessory load** | +0.88% | +0.79% | **2.34%** | **16.7%** |
-| 4 | Stop density | -3.54% | -3.53% | 1.95% | 14.0% |
-| 5 | Rolling work | -0.84% | -0.91% | 0.93% | 6.7% |
-| 6 | Mass | +7.47% | +7.47% | 0.67% | 4.8% |
+| 1 | Powertrain, labels & year | +8.04% | +8.01% | 3.89% | 28.9% |
+| 2 | Ambient temperature | -2.85% | -2.79% | 3.32% | 24.7% |
+| 3 | Duration & idle | +0.11% | -0.01% | 2.20% | 16.4% |
+| 4 | Speed & stops | -3.13% | -3.08% | 1.55% | 11.5% |
+| 5 | Rolling work | +0.19% | +0.18% | 0.92% | 6.8% |
+| 6 | Grade work | +0.51% | +0.53% | 0.68% | 5.0% |
+| 7 | Mass & class | +6.12% | +6.12% | 0.48% | 3.6% |
+| 8 | Aero work | +0.03% | +0.03% | 0.42% | 3.1% |
 
-On the three spotlight regimes now shown live on the Model families page (`site/src/pages/model-families.astro`):
-- **Cold-weather commute (`T < 0 C`, 327 trips, 15 cars):** real cars burn `+9.59%` more energy than RoadSim predicts; exact TreeSHAP isolates `+6.38%` to `Ambient temperature` (`+7.84%` real vs `+1.46%` twin).
-- **City hybrid (`HEV` stop-and-go, 138 trips, 5 cars):** net error is `-0.85%`, but TreeSHAP uncovers opposing gaps (`Stop density` `+0.77%`, `Ambient temperature` `+0.67%`, masked by `Model year` `-1.30%`).
-- **Mild highway ICE (`T >= 10 C`, 12 trips, 3 cars):** net error is `+0.89%`; aero (`-0.55%`), rolling (`+0.46%`), and grade (`-0.09%`) agree closely while `Model year` (`+4.19%`) carries the residual vehicle offset.
+- **Cold-weather commute (`T < 0 °C`, 327 trips, 15 cars):** the forest under-reads these trips by +9.60 % on average; ambient temperature carries +6.42 % of it (+7.77 % real vs +1.35 % twin). This finding did not depend on the grouping error.
+- **City hybrid (HEV stop-and-go, 138 trips, 5 cars):** net -0.94 %, with opposing terms: speed and stops +0.66 %, ambient temperature +0.70 %, powertrain, labels and year -1.38 %.
+- **Mild highway ICE (`T ≥ 10 °C`, 12 trips, 3 cars):** net +1.97 %; the road-load groups agree within 0.5 % and powertrain, labels and year carries +3.69 %. Twelve trips from three cars is too few to say more.
 
 ### AirfoilNet (UIUC dev) — forward residual gap (`429` points across `7` dev airfoils, `% drag shift`)
 
 | Rank | Physical feature group | Mean twin | Mean real | Mean \|real − twin\| | Gap share |
 |---:|---|---:|---:|---:|---:|
-| 1 | **Angle of attack (alpha)** | +13.24% | +13.19% | **10.98%** | **38.3%** |
-| 2 | **Mid-chord thickness (25–75% c)** | -1.61% | -1.58% | **8.68%** | **30.2%** |
-| 3 | Mid/aft camber | +5.27% | +5.42% | 4.66% | 16.2% |
-| 4 | Reynolds number (`log10 Re`) | -9.68% | -9.75% | 2.92% | 10.2% |
+| 1 | Angle of attack (alpha) | +12.45% | +12.40% | 11.29% | 41.4% |
+| 2 | Mid-chord thickness (25-75% c) | -1.98% | -2.03% | 9.28% | 34.0% |
+| 3 | Mid/aft camber | +4.75% | +4.87% | 2.40% | 8.8% |
+| 4 | Reynolds number (log10 Re) | -10.91% | -10.95% | 2.33% | 8.5% |
+| 5 | Leading-edge thickness (0-25% c) | +0.84% | +0.93% | 1.41% | 5.2% |
+| 6 | Trailing-edge thickness (75-100% c) | +1.59% | +1.60% | 0.58% | 2.1% |
+
+Maximum thickness, now its own group, carries 0.0 %: the depth-3 dev gap tree never splits on it.
 
 ## 4. Label-Free Cross-Family Disagreement (`|GBDT-Mono - Incumbent|`)
 
@@ -107,6 +114,14 @@ On the three spotlight regimes now shown live on the Model families page (`site/
 |---|---:|---:|---:|---:|---:|
 | **BuildingDetective (RECS 2020)** | 7,401 | +0.081 | `< 1e-11` | 1.09× | +0.374 |
 | **AirfoilNet (UIUC LSAT drag)** | 5,565 | +0.229 | `< 1e-60` | **1.90×** | +0.303 |
-| **EnergyNet (VED real trips)** | 25,793 | +0.157 | `< 1e-140` | **2.11×** | +0.256 |
+| **EnergyNet (VED real trips)** | 25,793 | +0.157 | `< 1e-140` (rows, not units) | **2.11×** | +0.256 |
 
 Even where the GBDT loses the pooled headline to the neural incumbent, keeping a lightweight pure-numpy forest beside the neural network gives an informative, label-free out-of-distribution / sim-to-real flag (`1.9–2.1x` error enrichment on the top decile of EnergyNet and AirfoilNet exam rows).
+
+## Review on import (27 Nov 2026)
+
+Reviewed before merging PR #19. Fixed in code: the EnergyNet SHAP groups (Codex P1), AirfoilNet's tmax group, the BuildingDetective adapter's weather field names (`wind_speed`, `elev`; Codex P2), `conformal_quantile` now returns `inf` when the required rank exceeds n (Codex P2; no published number used that case: at 68 % it needs n ≤ 2, and strata under 5 fall back to the pooled factor), `harness.py all` runs each platform in its own process (Codex P2), and the site's tree parity test reads a committed reference instead of calling Python (the site CI job has no numpy).
+
+**Open, waiting for the owner's approval:** the BuildingDetective GBDT arms in sections 1 and 2 were trained on BuildingSim banks with a constant 3 m/s wind and sea-level pressure. Their exam numbers (45.30 % and 44.96 %, the conformal rows for GBDT-Mono) describe those banks. The banks and forests have been rebuilt with the real weather (simulated validation: GBDT-Mono 29.74 % vs 30.58 %); a dated supplementary exam of the rebuilt arms (`harness.py buildingdetective exam --supplement 2026-11-27-wind`) has not been run. The incumbent rows are unaffected.
+
+The repo cannot show the exam order on its own: the score files carry no run time. The freeze log gives 25 Nov 2026 04:04 UTC; `harness.py` now stamps `scored_utc` on any future score file.
