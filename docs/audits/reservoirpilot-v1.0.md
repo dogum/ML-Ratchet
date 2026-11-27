@@ -14,3 +14,10 @@ OPENBLAS_NUM_THREADS=1 python -B docs/audits/reviews/reviewer-b/peer_b53c7c7_pro
 ```
 
 [First-pass evidence](reviews/reviewer-a/reservoirpilot-v1.0.md) · [Independent probe](reviews/reviewer-b/peer_b53c7c7_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Capacity raised by storage observed in the scored window | Yes | **Opt-in fix, re-score queued.** `make_task(..., causal_capacity=True)` takes capacity from metadata and the calibration record only. The default stays as the exam defined it. | The exam's definition (`training/task.py`, mirroring WaterData's `run_baselines_reservoir.py`) applies to every arm, baselines included, so changing it is a re-score of the whole board, queued for the owner. |
+| Loader interpolates before splitting; split date in both halves | Yes (minor) | Queued with the same re-score (it changes the shared exam definition). | — |

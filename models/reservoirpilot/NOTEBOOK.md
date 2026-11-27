@@ -235,3 +235,7 @@ are level (+0.37, −0.20 to +0.90). The Clopper-Pearson win-fraction intervals 
 What did not reproduce: nothing in the shipped exam log. Not reproduced by design: the shipped page's JS DP (see the
 import entry). Model.yaml, the card and the lab tables now carry the dev-tuned rule and the bootstrap intervals; the
 verdicts are unchanged (244: win; 151: win; CDEC: tie; shortage ratio and days above Qmax: loss; storage rows: info).
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The exam takes capacity as the largest storage observed, including the scored window. make_task(causal_capacity=True) now offers the calibration-only version. Changing the exam's own definition would re-score every arm on the shared board; that is queued for the owner.

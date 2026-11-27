@@ -113,11 +113,16 @@ class SnowSense:
             idx = c.index
             wys = sorted(set((idx.year + (idx.month >= 10)).tolist()))
         X, D, keep = [], [], []
+        last = c.index.max() if len(c) else None
         for y in wys:
             idx = pd.date_range(f'{y - 1}-08-01', periods=L, freq='D')
             w = c.reindex(idx)
             inwy = (idx.year + (idx.month >= 10)) == y
-            if w['T_mean'].reindex(idx[inwy]).notna().sum() < 200:
+            # A completed water year needs 200 days of temperature, as in training and the exam. A year the record
+            # ends inside (today's year) needs 30: until 27 Nov 2026 it returned nothing before day 200, then a full
+            # year of padded estimates (audit).
+            partial = last is not None and last < pd.Timestamp(f'{y}-09-30')
+            if w['T_mean'].reindex(idx[inwy]).notna().sum() < (30 if partial else 200):
                 continue
             Tm = w['T_mean'].interpolate(limit_direction='both').values
             Tn = w['T_min'].interpolate(limit_direction='both').values
@@ -137,20 +142,26 @@ class SnowSense:
         kd, kp, km = self.k['daily'], self.k['peak'], self.k['melt']
         band = lambda Q, j, k=1.0: 100.0 * np.maximum(Q[:, 2] + k * (Q[:, j] - Q[:, 2]), 0) ** 2
         daily, ann = [], []
+        last = clean(df).index.max()
         for j, y in enumerate(wys):
             wm = ((D[j].year + (D[j].month >= 10)) == y)
+            complete = not last < pd.Timestamp(f'{y}-09-30')
+            if not complete:
+                wm &= D[j] <= last              # no estimates for dates after the last input
             idx = D[j][wm]
             Q = Qa[j][wm]
             daily.append(pd.DataFrame({'swe': band(Q, 2), 'lo68': band(Q, 1, kd), 'hi68': band(Q, 3, kd),
                                        'lo90': band(Q, 0, kd), 'hi90': band(Q, 4, kd)}, index=idx))
             med = band(Q, 2)
             r = {'water_year': y, 'peak_swe_mm': float(med.max()), 'peak_date': idx[int(np.argmax(med))]}
-            mo = melt_out_idx(med)
+            mo = melt_out_idx(med) if complete else None
             r['melt_out_date'] = idx[mo] if mo is not None else pd.NaT
+            if not complete:                    # peak so far; melt-out is unknown until the year ends
+                r['observed_through'] = idx[-1]
             for tag, (jl, jh) in (('68', (1, 3)), ('90', (0, 4))):
                 r[f'peak_lo{tag}'] = float(band(Q, jl, kp).max())
                 r[f'peak_hi{tag}'] = float(band(Q, jh, kp).max())
-                a, b = melt_out_idx(band(Q, jl, km)), melt_out_idx(band(Q, jh, km))
+                a, b = (melt_out_idx(band(Q, jl, km)), melt_out_idx(band(Q, jh, km))) if complete else (None, None)
                 r[f'melt_lo{tag}'] = idx[a] if a is not None else pd.NaT
                 r[f'melt_hi{tag}'] = idx[b] if b is not None else pd.NaT
             ann.append(r)

@@ -94,6 +94,7 @@ Coverage of the 68% error bars on the exam: Daily SWE, snow days **77.7%**, Peak
 - Every water year starts on 1 August with no snow knowledge; perennial snow is outside the training data (simulated windows with snow on 1 August were dropped).
 - The dev prior was fitted on dev SWE up to WY2010 and the dev gate uses the same stations in WY2011-2025, so the gate is partly in-sample. The exam was untouched until the release.
 - 'WaterSim defaults' means WaterSim's default and attribute-transfer parameters as the exam path resolves them for a station given only latitude and elevation (energy balance CANOPY 0.535; degree-day TT -0.33 C, CFMAX 3.77, SFCF 1.054), not the bare parameter-table defaults.
+- Partial water years (audit, 25 Nov 2026; fixed 27 Nov 2026): predict() returned nothing before day 200 of the water year and then estimates through 30 September, 165 days past the last input. A year the record ends inside now needs 30 days, stops at the last input and reports the peak so far (melt-out is left empty). Completed years and the exam (which uses training/common.station_windows) are unchanged. Temperature gaps are filled from both sides: at the end of a live record that holds the last reading; across a gap in a past record it is smoothing, which moved station NSE by at most 0.0003 on the three packaged stations.
 
 ## The ratchet
 

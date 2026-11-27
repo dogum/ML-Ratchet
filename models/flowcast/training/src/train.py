@@ -55,6 +55,9 @@ def main(name):
     Btr = bd.add_sigma(bd.load_bank(cfg['phys'], 'train'), cfg.get('weight', 'target_std'))
     Bva = bd.add_sigma(bd.load_bank(cfg['phys'], 'val'), cfg.get('weight', 'target_std'))
     print(f'train {len(Btr["qo"])} val {len(Bva["qo"])}', flush=True)
+    # Seed torch before the network is built: until 27 Nov 2026 only NumPy's batch sampler was seeded, so the same
+    # config gave different initial weights and dropout masks (audit). Historical rungs were trained unseeded.
+    torch.manual_seed(cfg.get('seed', 0))
     net = build_net(cfg, Btr)
     if cfg.get('init_from'):
         sd = torch.load(f'{ROOT}/ckpt/{cfg["init_from"]}.pt', weights_only=False)['state']
@@ -76,6 +79,8 @@ def main(name):
         r = torch.load(rp, weights_only=False)
         net.load_state_dict(r['state']); opt.load_state_dict(r['opt']); step = r['step']; hist = r['hist']
         rng = np.random.default_rng([cfg.get('seed', 0), step])
+        if 'np_rng' in r:                                   # resume files written since 27 Nov 2026
+            rng.bit_generator.state = r['np_rng']; torch.set_rng_state(r['torch_rng'])
         print('resumed at', step, flush=True)
     N = len(Btr['qo']); maxo = Btr['F'].shape[1] - bd.WIN - 1
     t0 = time.time(); run = []
@@ -101,7 +106,8 @@ def main(name):
             hist.append({'step': step, **{k: v for k, v in ev.items() if k != 'nse_all'}})
             print('VAL', hist[-1], flush=True)
         if step % 250 == 0 or step == steps:
-            torch.save({'state': net.state_dict(), 'opt': opt.state_dict(), 'step': step, 'hist': hist},
+            torch.save({'state': net.state_dict(), 'opt': opt.state_dict(), 'step': step, 'hist': hist,
+                        'np_rng': rng.bit_generator.state, 'torch_rng': torch.get_rng_state()},
                        rp + '.tmp'); os.replace(rp + '.tmp', rp)
     torch.save({'state': net.state_dict(), 'cfg': cfg, 'hist': hist}, f'{ROOT}/ckpt/{name}.pt')
     print('done', time.time() - t0, flush=True)

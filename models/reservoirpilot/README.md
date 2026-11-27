@@ -88,6 +88,7 @@ WaterData's frozen reservoir exam, run once after the ratchet was closed (traini
 - ResOpsUS inflow is mostly back-calculated from storage changes: 189 of the 678 ResOpsUS dams have negative inflows somewhere, and 93 of the 244 exam dams fail the mass-balance check.
 - Weather data: the simulated training inflows are driven by ERA5-Land, which under-catches mountain and Pacific Northwest precipitation (50 CAMELS basins have a runoff ratio above 1) and drifts about 6 % between decades; this caps every Watershed method. The exam runs on recorded ResOpsUS inflow, so it enters ReservoirPilot only through the training inflows. Literature streamflow numbers (Daymet- or NLDAS-forced LSTMs, NSE about 0.69-0.76) are not comparable.
 - Rule notes: aux-dam statistics (6 complete dams, inflow ratios on 29) set the generator's ranges; the climatology features use each exam dam's calibration-half inflow, as WaterData's rule curve does; the dev dams both set generator ranges and gate rungs (partly in-sample); two void training runs (missing optimiser step) were removed and logged. The dev-tuned rule was tuned (on dev only) and scored after the exam had been seen.
+- Capacity (audit, 25 Nov 2026): the exam (and make_task) takes capacity as the larger of the metadata value and the highest storage observed, including the scored window, so a later observation can raise the capacity an earlier release sees. Two of the six packaged dams reach their supplied capacity exactly. make_task(causal_capacity=True) uses the calibration record only (opt-in since 27 Nov 2026). The definition is shared with WaterData's frozen baseline exam.
 
 ## The ratchet
 
@@ -147,6 +148,7 @@ Reservoir water balance, WaterData's exam benchmark unchanged: S(t+1) = S(t) + (
 - Adaptation to a drier or wetter decade: a 1-3 year inflow moving-average feature that lets demand and the inflow normal drift online, and a wider g4 spread.
 - Cascades, evaporation, minimum flows and an hourly flood mode.
 - Upstream to WaterSim: the reservoir task generator (operator-derived demand and Qmax, back-calculated inflow noise, upstream regulation and spikes, the non-stationary decade factor), and the realdata.random_forcing window arithmetic fix (span × 365 days is shorter than DateOffset(years=span), so 20-year draws can end a few days inside the exam period; the guard raises and ReservoirPilot redraws).
+- Queued (audit): a dated re-score of every arm, baselines included, with capacity from metadata and the calibration half only, on the owner's approval.
 
 ## Files
 
