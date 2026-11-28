@@ -25,7 +25,7 @@ The second-pass probe uses NumPy, SciPy, pandas, and CPU PyTorch. [Second-pass p
 |---|---|---|---|
 | Day-ahead wear planner reads realized future temperatures | Yes (a perfect temperature forecast) | **Opt-in fix, re-score queued.** `causal_wear(bat, T)` takes each hour's temperature from 48 h earlier; plans run up to 33 h ahead, so every plan reads only temperatures known when it is made (a first 24 h version still read up to 9 h ahead; Codex, PR #23). `run_policy(..., c_lin_plan=...)` uses it. Default stays as released, so the card's exam numbers remain what v1.3 does. | Three packaged node-years: −$0.052, −$0.024, −$0.032/kW-year. Test: changing every temperature from an issue hour on leaves that plan's wear costs unchanged for the next 34 h. |
 | Hour 0 reads its own real-time price as history | Yes | **Fixed** in `build()` and `training/features.py`: at t = 0 the day-ahead price stands in; from t = 1 nothing changes. | +$100 on hour 0's RT no longer changes hour 0's features (test). Packaged node-years move by at most +$0.0016/kW-year. |
-| Day-ahead column 35 reaches |z| 24–34 in scarcity | Observation | Not changed: output knots are clamped and the exam ranks held; noted for the next retrain. | — |
+| Day-ahead column 35 reaches \|z\| 24–34 in scarcity | Observation | Not changed: output knots are clamped and the exam ranks held; noted for the next retrain. | — |
 
 ### Follow-up (27 Nov 2026, approved queue)
 
